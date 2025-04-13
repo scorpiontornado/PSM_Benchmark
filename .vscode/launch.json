@@ -1,0 +1,62 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Self Test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/matching/SubgraphMatching.out",
+            "args": [
+                // "-d", "/root/yt/subgraph/code/PRSF/test/pi_dataset/data_graph",
+                // "-q", "/root/yt/subgraph/code/PRSF/test/pi_dataset/query_graph",             
+                "-d", "/var/lib/docker/subgraph/dataset/slabel/nlabel/HPRD/L15/HPRD-15.txt",
+                "-q", "/var/lib/docker/subgraph/dataset/slabel/nlabel/HPRD/L15/Q10/Q10-1.txt",
+                "-threadnums", "2",
+                "-split", "linear",
+                "-schedule", "busy2idlenostop",
+                "-num", "MAX",
+                "-time_limit", "2",
+                "-OutputFile", "/root/yt/subgraph/subgraph_test/C_output/HPRD/L15/Q10/Q10-1.txt",
+                "-QorCandi", "C",
+                "-BackMethods", "DPiso_CIRCINUS_CIRCINUS",
+                "-Qpattern", "STAR",
+                "-JoinMethod", "LEFTDEEP",
+            ],
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/a.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
