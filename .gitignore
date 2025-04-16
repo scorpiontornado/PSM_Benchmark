@@ -1,3 +1,6 @@
 build
 googletest
 /test/*
+# test_anony/C_output
+# test_anony/Q_output
+# datasets

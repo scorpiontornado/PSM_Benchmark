@@ -1,0 +1,1088 @@
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 1
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: LFTJ
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 4.474e-06
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.0003552
+[Thread 1] Filter vertices time (seconds): 0.000598046
+[Thread 1] Split Qeury Pattern Time: 2.7848e-05
+[Thread 1] Generate query plan time (seconds): 0.000220844
+[Thread 1] Enumerate time (seconds): 0.0345551
+[Thread 1] Preprocessing time (seconds): 0.00117409
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0357292
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 571492
+[Thread 1] Thread Enum Time: 0.034469
+[Thread 1] Thread Execution Time: 0.0344674
+[Thread 1] Thread Split Time: 0
+[Thread 1] Thread Idle Time: 1.572e-06
+[Thread 1] Thread Call Count: 571492
+[Thread 1] Thread Embedding Count: 441218
+[Thread 1] TaskNum: 1
+[Thread 1] Per Call Time (nanoseconds): 60
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 1
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CFL
+[Thread 1] Order Type: CFL
+[Thread 1] Engine Type: EXPLORE
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 4.888e-06
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000242075
+[Thread 1] Filter vertices time (seconds): 0.000584079
+[Thread 1] Split Qeury Pattern Time: 1.8244e-05
+[Thread 1] Generate query plan time (seconds): 0.000345524
+[Thread 1] Enumerate time (seconds): 0.0335985
+[Thread 1] Preprocessing time (seconds): 0.00117168
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0347702
+[Thread 1] Memory cost (MB): 0.0114288
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 558816
+[Thread 1] Thread Enum Time: 0.0335507
+[Thread 1] Thread Execution Time: 0.0335491
+[Thread 1] Thread Split Time: 0
+[Thread 1] Thread Idle Time: 1.515e-06
+[Thread 1] Thread Call Count: 558816
+[Thread 1] Thread Embedding Count: 441218
+[Thread 1] TaskNum: 1
+[Thread 1] Per Call Time (nanoseconds): 60
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 1
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: GQL
+[Thread 1] Order Type: GQL
+[Thread 1] Engine Type: GQL
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] bfsTraversalOrdered time == 6.091e-06
+[Thread 1] computeWorkloadArray time == 0.000105431
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 4.563e-06
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000100851
+[Thread 1] Filter vertices time (seconds): 0.00111903
+[Thread 1] Split Qeury Pattern Time: 2.1568e-05
+[Thread 1] Generate query plan time (seconds): 0.000201354
+[Thread 1] Enumerate time (seconds): 0.233539
+[Thread 1] Preprocessing time (seconds): 0.00142124
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.23496
+[Thread 1] Memory cost (MB): 0.0108452
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 550212
+[Thread 1] Thread Enum Time: 0.232504
+[Thread 1] Thread Execution Time: 0.232502
+[Thread 1] Thread Split Time: 0
+[Thread 1] Thread Idle Time: 2.098e-06
+[Thread 1] Thread Call Count: 550212
+[Thread 1] Thread Embedding Count: 441218
+[Thread 1] TaskNum: 1
+[Thread 1] Per Call Time (nanoseconds): 424
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 1
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CECI
+[Thread 1] Order Type: CECI
+[Thread 1] Engine Type: CECI
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 5.816e-06
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 1.45e-07
+[Thread 1] Filter vertices time (seconds): 0.00121529
+[Thread 1] Split Qeury Pattern Time: 1.9352e-05
+[Thread 1] Generate query plan time (seconds): 0.000279772
+[Thread 1] Enumerate time (seconds): 0.0363612
+[Thread 1] Preprocessing time (seconds): 0.00149521
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0378564
+[Thread 1] Memory cost (MB): 0.00680542
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 566609
+[Thread 1] Thread Enum Time: 0.0363106
+[Thread 1] Thread Execution Time: 0.0363083
+[Thread 1] Thread Split Time: 0
+[Thread 1] Thread Idle Time: 2.243e-06
+[Thread 1] Thread Call Count: 566609
+[Thread 1] Thread Embedding Count: 441218
+[Thread 1] TaskNum: 1
+[Thread 1] Per Call Time (nanoseconds): 64
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 1
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: DPiso
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 5.699e-06
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000394143
+[Thread 1] Filter vertices time (seconds): 0.000848386
+[Thread 1] Split Qeury Pattern Time: 2.115e-05
+[Thread 1] Generate query plan time (seconds): 0.000236496
+[Thread 1] Enumerate time (seconds): 0.101031
+[Thread 1] Preprocessing time (seconds): 0.00147902
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.10251
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 504019
+[Thread 1] Thread Enum Time: 0.100933
+[Thread 1] Thread Execution Time: 0.100931
+[Thread 1] Thread Split Time: 0
+[Thread 1] Thread Idle Time: 2.158e-06
+[Thread 1] Thread Call Count: 504019
+[Thread 1] Thread Embedding Count: 441218
+[Thread 1] TaskNum: 1
+[Thread 1] Per Call Time (nanoseconds): 200
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 1
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: CIRCINUS
+[Thread 1] Engine Type: CIRCINUS
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 1.0906e-05
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000100741
+[Thread 1] Filter vertices time (seconds): 0.000503773
+[Thread 1] Split Qeury Pattern Time: 2.0629e-05
+[Thread 1] Generate query plan time (seconds): 0.000202793
+[Thread 1] Enumerate time (seconds): 0.188528
+[Thread 1] Preprocessing time (seconds): 0.000807307
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.189335
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 85092
+[Thread 1] Thread Enum Time: 0.188472
+[Thread 1] Thread Execution Time: 0.188468
+[Thread 1] Thread Split Time: 0
+[Thread 1] Thread Idle Time: 3.404e-06
+[Thread 1] Thread Call Count: 85092
+[Thread 1] Thread Embedding Count: 441218
+[Thread 1] TaskNum: 1
+[Thread 1] Per Call Time (nanoseconds): 2215
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 4
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: LFTJ
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000240151
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000109156
+[Thread 1] Filter vertices time (seconds): 0.000523209
+[Thread 1] Split Qeury Pattern Time: 2.1625e-05
+[Thread 1] Generate query plan time (seconds): 0.000191541
+[Thread 1] Enumerate time (seconds): 0.010416
+[Thread 1] Preprocessing time (seconds): 0.000823906
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0112399
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 571492
+[Thread 1] Thread Enum Time: 0.0098405, 0.00986444, 0.00996601, 0.00991532
+[Thread 1] Thread Execution Time: 0.0094508, 0.00985107, 0.00947388, 0.00954375
+[Thread 1] Thread Split Time: 9.5281e-05, 0.000118952, 0.00026888, 0.000205156
+[Thread 1] Thread Idle Time: 0.000441436, 0.000114936, 0.000413635, 0.000296757
+[Thread 1] Thread Call Count: 145455, 141543, 145166, 139328
+[Thread 1] Thread Embedding Count: 111292, 110254, 112243, 107429
+[Thread 1] TaskNum: 84
+[Thread 1] Per Call Time (nanoseconds): 18
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 4
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CFL
+[Thread 1] Order Type: CFL
+[Thread 1] Engine Type: EXPLORE
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000155928
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000266049
+[Thread 1] Filter vertices time (seconds): 0.00058149
+[Thread 1] Split Qeury Pattern Time: 1.8625e-05
+[Thread 1] Generate query plan time (seconds): 0.000354769
+[Thread 1] Enumerate time (seconds): 0.0095871
+[Thread 1] Preprocessing time (seconds): 0.00120231
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0107894
+[Thread 1] Memory cost (MB): 0.0114288
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 558816
+[Thread 1] Thread Enum Time: 0.00925993, 0.00929223, 0.00919969, 0.00922379
+[Thread 1] Thread Execution Time: 0.00914844, 0.0092106, 0.00914339, 0.00910232
+[Thread 1] Thread Split Time: 0, 5.6492e-05, 5.6611e-05, 5.3637e-05
+[Thread 1] Thread Idle Time: 8.0401e-05, 9.7374e-05, 0.000143796, 4.9327e-05
+[Thread 1] Thread Call Count: 154771, 144690, 138631, 120724
+[Thread 1] Thread Embedding Count: 132769, 117412, 104012, 87025
+[Thread 1] TaskNum: 56
+[Thread 1] Per Call Time (nanoseconds): 17
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 4
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: GQL
+[Thread 1] Order Type: GQL
+[Thread 1] Engine Type: GQL
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] bfsTraversalOrdered time == 6.066e-06
+[Thread 1] computeWorkloadArray time == 0.00011371
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000118332
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 7.2133e-05
+[Thread 1] Filter vertices time (seconds): 0.000848196
+[Thread 1] Split Qeury Pattern Time: 1.9115e-05
+[Thread 1] Generate query plan time (seconds): 0.000205465
+[Thread 1] Enumerate time (seconds): 0.0819936
+[Thread 1] Preprocessing time (seconds): 0.00112579
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0831194
+[Thread 1] Memory cost (MB): 0.0108452
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 550212
+[Thread 1] Thread Enum Time: 0.0816801, 0.0656737, 0.0657329, 0.065747
+[Thread 1] Thread Execution Time: 0.060542, 0.0627235, 0.0627699, 0.062474
+[Thread 1] Thread Split Time: 0.000907994, 0.00106908, 0.00120603, 0.000166728
+[Thread 1] Thread Idle Time: 0.00297708, 0.00300945, 0.00319969, 0.021138
+[Thread 1] Thread Call Count: 132581, 147575, 133791, 136265
+[Thread 1] Thread Embedding Count: 107516, 119609, 106030, 108063
+[Thread 1] TaskNum: 247
+[Thread 1] Per Call Time (nanoseconds): 149
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 4
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CECI
+[Thread 1] Order Type: CECI
+[Thread 1] Engine Type: CECI
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000337478
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 1.33e-07
+[Thread 1] Filter vertices time (seconds): 0.00127458
+[Thread 1] Split Qeury Pattern Time: 2.063e-05
+[Thread 1] Generate query plan time (seconds): 0.000333922
+[Thread 1] Enumerate time (seconds): 0.0182186
+[Thread 1] Preprocessing time (seconds): 0.00160863
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0198272
+[Thread 1] Memory cost (MB): 0.00680542
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 566609
+[Thread 1] Thread Enum Time: 0.00448108, 0.000781746, 0.0176202, 0.017575
+[Thread 1] Thread Execution Time: 0.000365348, 0.00428386, 0.0173616, 0.0167091
+[Thread 1] Thread Split Time: 0, 0.000412654, 0.000172762, 0.00035322
+[Thread 1] Thread Idle Time: 0.000865896, 0.0002586, 0.000416398, 0.000197218
+[Thread 1] Thread Call Count: 1671, 52491, 261196, 251251
+[Thread 1] Thread Embedding Count: 1287, 40075, 205696, 194160
+[Thread 1] TaskNum: 110
+[Thread 1] Per Call Time (nanoseconds): 32
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 4
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: DPiso
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000205258
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000103232
+[Thread 1] Filter vertices time (seconds): 0.000516831
+[Thread 1] Split Qeury Pattern Time: 2.1451e-05
+[Thread 1] Generate query plan time (seconds): 0.00020308
+[Thread 1] Enumerate time (seconds): 0.0359114
+[Thread 1] Preprocessing time (seconds): 0.000823143
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0367346
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 504019
+[Thread 1] Thread Enum Time: 0.0220832, 0.0354393, 0.0354839, 0.0353631
+[Thread 1] Thread Execution Time: 0.0142217, 0.0350947, 0.0352992, 0.0353239
+[Thread 1] Thread Split Time: 0, 7.6858e-05, 0.000143002, 5.0883e-05
+[Thread 1] Thread Idle Time: 0.000268477, 0.000184648, 0.000115345, 0.0078615
+[Thread 1] Thread Call Count: 63031, 153212, 163971, 123805
+[Thread 1] Thread Embedding Count: 55224, 132215, 145860, 107919
+[Thread 1] TaskNum: 51
+[Thread 1] Per Call Time (nanoseconds): 71
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 4
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: CIRCINUS
+[Thread 1] Engine Type: CIRCINUS
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.00035745
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000110009
+[Thread 1] Filter vertices time (seconds): 0.000546486
+[Thread 1] Split Qeury Pattern Time: 2.1841e-05
+[Thread 1] Generate query plan time (seconds): 0.000222038
+[Thread 1] Enumerate time (seconds): 0.0547079
+[Thread 1] Preprocessing time (seconds): 0.000878533
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0555864
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 85092
+[Thread 1] Thread Enum Time: 0.0541731, 0.0541136, 0.0540539, 0.0383811
+[Thread 1] Thread Execution Time: 0.0539135, 0.0380807, 0.0535432, 0.0539748
+[Thread 1] Thread Split Time: 6.6333e-05, 0.000121377, 0.000167552, 8.4577e-05
+[Thread 1] Thread Idle Time: 0.000300422, 0.000510684, 0.000138745, 0.000259618
+[Thread 1] Thread Call Count: 23209, 16675, 23839, 21369
+[Thread 1] Thread Embedding Count: 137406, 83061, 106247, 114504
+[Thread 1] TaskNum: 63
+[Thread 1] Per Call Time (nanoseconds): 642
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 16
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: LFTJ
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000195282
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000127862
+[Thread 1] Filter vertices time (seconds): 0.000494028
+[Thread 1] Split Qeury Pattern Time: 2.1893e-05
+[Thread 1] Generate query plan time (seconds): 0.000203172
+[Thread 1] Enumerate time (seconds): 0.0122882
+[Thread 1] Preprocessing time (seconds): 0.000825062
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0131132
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 571492
+[Thread 1] Thread Enum Time: 0.0087621, 0.00867167, 1.807e-05, 0.00856691, 0.0116999, 0.0117514, 0.0114726, 0.00859281, 0.0085957, 0.0117979, 0.00870327, 0.011707, 0.00862397, 0.011615, 0.00861825, 0.0112207
+[Thread 1] Thread Execution Time: 0, 0.00189909, 0.00695321, 0.00466254, 0.00672861, 0.00700636, 0.00708133, 0.00228603, 0.00377414, 0.00722863, 0.00709235, 0.00745786, 0.00455892, 0.00121124, 0.00411627, 0.00248112
+[Thread 1] Thread Split Time: 0, 0.00261661, 0.000746381, 0.00118091, 0.00300843, 0.00132453, 0.00147512, 0.00258804, 0.00263071, 0.00155371, 0.00231329, 0.0034071, 0.00195046, 0.00291262, 0.00198392, 0.000908378
+[Thread 1] Thread Idle Time: 0.00412838, 0.00613713, 0.00488634, 0.00464583, 0.00638563, 0.00452272, 0.0044662, 0.00481867, 0.00669661, 0.00471657, 1.807e-05, 0.00390437, 0.00474673, 0.00424913, 0.00749203, 0.00406505
+[Thread 1] Thread Call Count: 0, 9790, 79105, 22645, 53044, 66434, 76821, 822, 11176, 82736, 53603, 67994, 20210, 2279, 20651, 4182
+[Thread 1] Thread Embedding Count: 0, 7287, 60912, 17433, 42782, 51232, 59626, 641, 8446, 63237, 40001, 52736, 15395, 1809, 16326, 3355
+[Thread 1] TaskNum: 516
+[Thread 1] Per Call Time (nanoseconds): 21
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 16
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CFL
+[Thread 1] Order Type: CFL
+[Thread 1] Engine Type: EXPLORE
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000177123
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 8.595e-05
+[Thread 1] Filter vertices time (seconds): 0.000592584
+[Thread 1] Split Qeury Pattern Time: 1.8178e-05
+[Thread 1] Generate query plan time (seconds): 0.00035861
+[Thread 1] Enumerate time (seconds): 0.0108195
+[Thread 1] Preprocessing time (seconds): 0.00103714
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0118566
+[Thread 1] Memory cost (MB): 0.0114288
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 558816
+[Thread 1] Thread Enum Time: 0.0100773, 0.00482387, 0.00644612, 0.00997944, 0.00631572, 0.00986708, 0.00632288, 0.00483473, 0.00483862, 0.00629324, 0.00948327, 0.00639621, 0.00630104, 0.0100875, 0.0100495, 0.0100492
+[Thread 1] Thread Execution Time: 0.00992641, 0.00671376, 0.00116527, 0.00573431, 0.00555505, 0.006563, 0.0030015, 0.00178933, 0.000164727, 0.0015055, 0.00621677, 0.00201176, 0.00549883, 0.00266149, 0.00476758, 0.00370152
+[Thread 1] Thread Split Time: 0.00170871, 3.0863e-05, 0.00112716, 0.00177945, 0.000948475, 0.00233663, 0.00131412, 0.00116032, 0.00261697, 0.00224467, 0.00428683, 0.000679949, 0.0012968, 0.00216791, 0.000983599, 0.00117852
+[Thread 1] Thread Idle Time: 0.00431487, 0.00333576, 0.00351431, 0.00331422, 0.00431203, 0.00453355, 0.00332923, 0.00467389, 0.0036586, 0.0027446, 5.3022e-05, 0.00428148, 0.0032665, 0.00458871, 0.00162862, 0.00363954
+[Thread 1] Thread Call Count: 84360, 63276, 276, 60866, 52479, 84582, 9558, 6924, 614, 2106, 45375, 3177, 63755, 17086, 34980, 29402
+[Thread 1] Thread Embedding Count: 72747, 53385, 235, 48200, 36690, 68849, 8032, 5672, 519, 1806, 29154, 2692, 44341, 14264, 30234, 24398
+[Thread 1] TaskNum: 243
+[Thread 1] Per Call Time (nanoseconds): 19
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 16
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: GQL
+[Thread 1] Order Type: GQL
+[Thread 1] Engine Type: GQL
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] bfsTraversalOrdered time == 1.1417e-05
+[Thread 1] computeWorkloadArray time == 0.000149079
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000271808
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000181755
+[Thread 1] Filter vertices time (seconds): 0.00179585
+[Thread 1] Split Qeury Pattern Time: 7.6589e-05
+[Thread 1] Generate query plan time (seconds): 0.000401566
+[Thread 1] Enumerate time (seconds): 0.0494895
+[Thread 1] Preprocessing time (seconds): 0.00237917
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0518687
+[Thread 1] Memory cost (MB): 0.0108452
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 550212
+[Thread 1] Thread Enum Time: 0.0417276, 0.0488443, 0.0485051, 0.0415858, 0.0486615, 0.0484986, 0.0484386, 0.0416788, 0.0415873, 0.047612, 0.0404796, 0.0415977, 0.0417114, 0.0485782, 0.0416129, 0.0403888
+[Thread 1] Thread Execution Time: 0.0282892, 0.0421119, 0.00307096, 0.0470304, 0.0281868, 0.0250999, 0.0461911, 0.0327036, 0.00686512, 0.0397689, 0.0330818, 0.00672948, 0.0209283, 0.0294224, 0.0146198, 0.0218341
+[Thread 1] Thread Split Time: 0.00152989, 0.00354557, 0.00589117, 0.0181474, 0.0117681, 0.0164089, 0.00163847, 0.00506704, 0.0124718, 0.0244685, 0.00705271, 0.0110213, 0.00314246, 0.0014694, 0.0124023, 0.00130164
+[Thread 1] Thread Idle Time: 0.00730699, 0.0385419, 0.00646624, 0.0271078, 0.0206575, 0.0347206, 0.00247035, 0.0233987, 0.0157349, 0.0133897, 0.00147477, 0.0197532, 0.00784303, 0.0110572, 0.0206694, 0.0349819
+[Thread 1] Thread Call Count: 52625, 45138, 3438, 49909, 20088, 21239, 93720, 26093, 10001, 25769, 64043, 8870, 12858, 46938, 30668, 38815
+[Thread 1] Thread Embedding Count: 41871, 35776, 2871, 39843, 15412, 16350, 76202, 20208, 7914, 20564, 52023, 6933, 10084, 38436, 24844, 31887
+[Thread 1] TaskNum: 841
+[Thread 1] Per Call Time (nanoseconds): 89
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 16
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CECI
+[Thread 1] Order Type: CECI
+[Thread 1] Engine Type: CECI
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000288174
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 1.55e-07
+[Thread 1] Filter vertices time (seconds): 0.00124358
+[Thread 1] Split Qeury Pattern Time: 2.2077e-05
+[Thread 1] Generate query plan time (seconds): 0.000386474
+[Thread 1] Enumerate time (seconds): 0.00837986
+[Thread 1] Preprocessing time (seconds): 0.00163021
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0100101
+[Thread 1] Memory cost (MB): 0.00680542
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 566609
+[Thread 1] Thread Enum Time: 0.00764425, 0.00766082, 0.00431711, 0.0042592, 0.00716333, 0.00431973, 0.00140094, 0.00763488, 0.00435776, 0.00439655, 0.00215667, 0.00768988, 0.00779747, 0.00782564, 0.00394914, 0.00429496
+[Thread 1] Thread Execution Time: 0.00100999, 0.00335503, 0.00661531, 0.00672717, 0.00676689, 0.00308807, 0.003302, 0.00312236, 0.00657713, 0.00250476, 0.00579641, 0.00411692, 0.00602604, 0.000844424, 0.00655689, 0.00148146
+[Thread 1] Thread Split Time: 0.000613704, 0.00122204, 0.000555911, 0.00091127, 0.00283659, 0.00308203, 0.000942276, 0.00050543, 0.000705424, 0.000500721, 0.00180905, 0.000512568, 0.00115593, 0.000309186, 0.00234236, 0.000536226
+[Thread 1] Thread Idle Time: 0.00179021, 0.000826786, 0.00124851, 0.000917075, 0.00101773, 0.000390949, 0.000867992, 0.00126969, 0.00104152, 0.00163478, 0.000200193, 0.00277774, 0.00136692, 0.00131225, 0.00107456, 0.00124058
+[Thread 1] Thread Call Count: 3904, 1889, 56370, 79324, 82301, 1332, 31401, 3111, 52268, 29621, 45635, 16567, 78043, 2971, 79667, 2205
+[Thread 1] Thread Embedding Count: 2906, 1348, 45518, 62101, 63899, 954, 24154, 2436, 40372, 23227, 33926, 13086, 61092, 2257, 62190, 1752
+[Thread 1] TaskNum: 415
+[Thread 1] Per Call Time (nanoseconds): 14
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 16
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: DPiso
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000184522
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000258635
+[Thread 1] Filter vertices time (seconds): 0.000503318
+[Thread 1] Split Qeury Pattern Time: 2.0389e-05
+[Thread 1] Generate query plan time (seconds): 0.000215774
+[Thread 1] Enumerate time (seconds): 0.0184905
+[Thread 1] Preprocessing time (seconds): 0.000977727
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0194683
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 504019
+[Thread 1] Thread Enum Time: 0.00981969, 0.0178917, 0.0179959, 0.0179231, 0.017903, 0.0178051, 0.00972513, 0.00973825, 0.00965121, 0.00957017, 0.00966939, 0.00964813, 0.00950612, 0.00972171, 0.0174503, 0.0179403
+[Thread 1] Thread Execution Time: 0.014976, 0.0153168, 0.00507942, 0.0161872, 0.0107344, 0.0158449, 0.0178233, 0.00277319, 0.00503474, 0.00143433, 0.00264231, 0.00546422, 0.00300107, 0.00421937, 0.0114467, 0.00374179
+[Thread 1] Thread Split Time: 0.00167548, 0.00354475, 0.0018045, 0.00567816, 0.00423992, 0.00130579, 0.00375293, 0.00358095, 0.00256808, 0.00209938, 0.000755091, 0.00447838, 0.00220648, 0.00111407, 0.00170706, 0.00292487
+[Thread 1] Thread Idle Time: 0.00175307, 0.00600362, 0.00474027, 0.00582838, 0.00715736, 0.00294714, 7.9663e-05, 0.00196019, 0.00695194, 0.00470351, 0.00267903, 0.00821688, 0.00545001, 0.00425749, 0.00700582, 0.00650505
+[Thread 1] Thread Call Count: 78705, 62968, 14423, 72603, 43375, 57426, 72247, 5947, 6157, 2118, 4828, 10084, 6067, 10106, 48093, 8872
+[Thread 1] Thread Embedding Count: 70622, 55856, 12550, 63321, 36810, 48233, 63037, 5118, 5339, 1860, 4269, 8818, 5404, 9065, 42988, 7928
+[Thread 1] TaskNum: 678
+[Thread 1] Per Call Time (nanoseconds): 36
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 16
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: CIRCINUS
+[Thread 1] Engine Type: CIRCINUS
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000286457
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 7.9331e-05
+[Thread 1] Filter vertices time (seconds): 0.000456763
+[Thread 1] Split Qeury Pattern Time: 1.7855e-05
+[Thread 1] Generate query plan time (seconds): 0.000211399
+[Thread 1] Enumerate time (seconds): 0.0337179
+[Thread 1] Preprocessing time (seconds): 0.000747493
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0344654
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 85092
+[Thread 1] Thread Enum Time: 0.0234313, 0.0247204, 0.0255729, 0.0198219, 0.0329126, 0.0198758, 0.0199727, 0.0329474, 0.0199148, 0.0328975, 0.0328491, 0.0239092, 0.0328787, 0.0197493, 0.0325696, 0.0331238
+[Thread 1] Thread Execution Time: 0.03042, 0.0276028, 0.0165007, 0.0197047, 0.0201159, 0.0316329, 0.0120311, 0.0135946, 0.00850758, 0.0294622, 0.0228794, 0.0167135, 0.020468, 0.0163272, 0.0150995, 0.0107261
+[Thread 1] Thread Split Time: 0.000874065, 0.000133853, 0.000429868, 0.00026045, 0.00490441, 0.00123741, 0.00316001, 0.000470568, 0.0030313, 0.00561171, 0.00147858, 0.00375424, 0.000946508, 0.00151479, 0.0012563, 0.00361748
+[Thread 1] Thread Idle Time: 0.0027038, 0.00310735, 0.0112417, 0.0114002, 0.00821975, 0.00121627, 0.0103146, 0.0127629, 0.00269347, 0.00310847, 0.0053098, 0.00914969, 0.00487323, 0.0124795, 0.00358757, 0.0131929
+[Thread 1] Thread Call Count: 8777, 7511, 4737, 5793, 6203, 6374, 3562, 3915, 2632, 6544, 6608, 5552, 4945, 4447, 4495, 2997
+[Thread 1] Thread Embedding Count: 58877, 37129, 17567, 30938, 46293, 40361, 14629, 9695, 19172, 27504, 26483, 29235, 20648, 25054, 24069, 13564
+[Thread 1] TaskNum: 393
+[Thread 1] Per Call Time (nanoseconds): 396
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 64
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: LFTJ
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000213676
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000116186
+[Thread 1] Filter vertices time (seconds): 0.000572144
+[Thread 1] Split Qeury Pattern Time: 2.1908e-05
+[Thread 1] Generate query plan time (seconds): 0.000216818
+[Thread 1] Enumerate time (seconds): 0.025659
+[Thread 1] Preprocessing time (seconds): 0.000905148
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0265642
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 571492
+[Thread 1] Thread Enum Time: 0.0206918, 0.022744, 0.0204011, 0.020407, 0.0195516, 0.0194343, 0.0212942, 0.0202333, 0.0200463, 0.0243426, 0.0198572, 0.0241588, 0.0197828, 0.0192767, 0.0199196, 0.020035, 0.0210064, 0.019253, 0.020782, 0.0198764, 0.020183, 0.0196877, 0.0210368, 0.0199854, 0.0199129, 0.0203867, 0.0193047, 0.024266, 0.0204953, 0.0198498, 0.0199906, 0.0199264, 0.024616, 0.0207824, 0.0199614, 0.0192701, 0.0192529, 0.0199839, 0.0204558, 0.0194029, 0.0192807, 0.021297, 0.0202394, 0.0200571, 0.0203228, 0.0203514, 0.0197279, 0.0195454, 0.024664, 0.0201511, 0.0211662, 0.0201018, 0.0201637, 0.0200978, 0.0246892, 0.0196943, 0.0203723, 0.0202085, 0.0203433, 0.0205024, 0.0213086, 0.0213346, 0.0205345, 0.0204981
+[Thread 1] Thread Execution Time: 0.0171117, 0.0177605, 0.0226195, 0.0158834, 0.00827913, 0.00514, 0.00783245, 0.0082541, 0.016236, 0.00115029, 0.0027353, 0.00698814, 0.00242742, 0.00977813, 0.0181108, 0.0106259, 0.00186144, 0.0210167, 0.00242522, 0.0158776, 0.0152649, 0.00820136, 0.00297986, 0.0163285, 0.0143256, 0.0146785, 0.0116071, 0.00726304, 0.00308837, 0.0193334, 0.01679, 0.0119518, 0.0188235, 0.00345398, 0.0131985, 0.0136747, 0.013758, 0.00116333, 0.0139857, 0.0038732, 0.0124304, 0.00459069, 0.00303546, 0.00742252, 0.00280447, 0.0052717, 0.0144612, 0.00342219, 0.0110603, 0.00213776, 0.0146849, 0.0160582, 0.0121636, 0.0157755, 0.0026502, 4.1482e-05, 0.0137967, 0.0151115, 0.00808227, 0.0115073, 0.0161182, 0.0196573, 0.0167031, 0.00595759
+[Thread 1] Thread Split Time: 0.00289463, 1.053e-06, 0.00224007, 0.00172315, 0.00748005, 0.00504407, 5.38e-07, 0.0131758, 0.00237676, 0.00113175, 0.0130422, 0.00469978, 0.0154191, 0.0142053, 0.0129454, 0.00917047, 0.0182848, 0.0130268, 0.0135151, 0.0123812, 0.0142026, 0.00259216, 0.0142747, 0.0135382, 0.00518462, 0.0107045, 0.00609907, 0.0021833, 0.0182869, 0.0159835, 0.0110338, 0.00747343, 0.0152312, 0.0156338, 0.00241598, 0.0169938, 0.0145135, 0.0157961, 0.0137266, 0.00738285, 0.0154493, 0.00788973, 0.0107381, 0.00203925, 0.00319107, 0.0140516, 0.012444, 0.0131928, 0.0130956, 0.00364462, 0.00440279, 0.00207582, 0.00730967, 0.0153279, 0.016507, 0.00273127, 0.00675905, 0.00739133, 0.0114177, 0.01647, 0.0058013, 0.0112549, 0.0154746, 0.00250706
+[Thread 1] Thread Idle Time: 0.00538658, 0.0127021, 0.00665606, 0.00935681, 0.00371244, 0.00606119, 0.00470832, 0.0144878, 0.0180679, 0.0168775, 0.0125629, 0.0175728, 0.0106683, 0.0192632, 0.0162968, 0.0110517, 0.00574144, 0.00609711, 0.00381814, 0.0117809, 0.00368358, 0.00818038, 0.0121007, 0.015267, 0.0167472, 0.00686635, 0.00332594, 0.017432, 0.006048, 0.0154201, 0.00632123, 0.012122, 0.00624758, 0.0161731, 0.0151921, 0.00741945, 0.00619394, 0.0164724, 0.00579253, 0.00890107, 0.0158479, 0.0171152, 0.00222341, 0.00375274, 0.0134454, 0.0181304, 0.00753908, 0.0190761, 0.00685857, 0.00664815, 0.00756433, 0.00457587, 0.0168952, 0.00204448, 0.0174158, 0.00955903, 0.00299003, 0.00428028, 0.00397959, 0.00503195, 0.0124312, 0.017284, 0.000875074, 0.0133552
+[Thread 1] Thread Call Count: 181, 242, 55086, 5041, 363, 460, 800, 344, 980, 4798, 476, 1418, 378, 67800, 63902, 16581, 206, 91351, 1466, 25004, 15125, 432, 1013, 811, 265, 4215, 9491, 10368, 822, 2412, 240, 311, 52048, 855, 400, 4472, 11195, 261, 1729, 1498, 286, 1331, 7183, 841, 540, 1009, 676, 426, 270, 1583, 2507, 218, 12509, 1393, 400, 48, 2428, 12334, 172, 284, 3629, 64068, 2138, 379
+[Thread 1] Thread Embedding Count: 128, 194, 41811, 4146, 282, 361, 578, 257, 796, 3874, 396, 1153, 284, 53766, 48831, 13162, 176, 69793, 1152, 18457, 11972, 344, 813, 653, 204, 3428, 6815, 8441, 598, 1834, 172, 212, 39596, 635, 299, 3397, 9030, 205, 1295, 1191, 229, 992, 5658, 692, 422, 814, 541, 318, 201, 1304, 1982, 166, 10060, 1170, 308, 37, 1898, 9613, 125, 194, 2611, 49176, 1678, 298
+[Thread 1] TaskNum: 1596
+[Thread 1] Per Call Time (nanoseconds): 44
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 64
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CFL
+[Thread 1] Order Type: CFL
+[Thread 1] Engine Type: EXPLORE
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000191635
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 9.2023e-05
+[Thread 1] Filter vertices time (seconds): 0.000654046
+[Thread 1] Split Qeury Pattern Time: 2.084e-05
+[Thread 1] Generate query plan time (seconds): 0.000396918
+[Thread 1] Enumerate time (seconds): 0.0148498
+[Thread 1] Preprocessing time (seconds): 0.00114299
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0159928
+[Thread 1] Memory cost (MB): 0.0114288
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 558816
+[Thread 1] Thread Enum Time: 0.00626334, 0.00598531, 0.0057026, 0.0049191, 0.0128195, 0.00613176, 0.00721844, 0.00990819, 0.00563287, 0.00536667, 0.00552993, 0.00483482, 0.00590195, 0.00760119, 0.00500508, 0.00502768, 0.00533568, 0.00526163, 0.00726918, 0.00498123, 0.00554635, 0.00504014, 0.00504402, 0.0110859, 0.00544013, 0.00469352, 0.0071804, 0.00717593, 0.00536481, 0.00521102, 0.00538051, 0.00481928, 0.00993715, 0.00505188, 0.0052543, 0.00493717, 0.00549479, 0.0100861, 0.00532462, 0.0074866, 0.00729767, 0.00544487, 0.00548491, 0.00745647, 0.0101191, 0.00534829, 0.00508067, 0.0101285, 0.00545521, 0.00512683, 0.00537815, 0.00762007, 0.00769029, 0.00542051, 0.00555411, 0.0129125, 0.00521106, 0.00522294, 0.00538072, 0.00554813, 0.0130876, 0.00486074, 0.00511609, 0.00571965
+[Thread 1] Thread Execution Time: 0.0035934, 0.00564829, 0.00273119, 0.00261125, 0.00215261, 0.00202689, 0.00253998, 0.00229219, 0.00241274, 0.00247143, 0.00225307, 0.00213997, 0.00269492, 0.00491779, 0.00347973, 0.00825864, 0.00177606, 0.00693652, 0.00206077, 0.000962492, 0.0104717, 0.00298108, 0.00163639, 0.00205867, 0.00934489, 0.00300741, 0.00294562, 0.002278, 0.00256566, 0.00294373, 0.0034028, 0.00110936, 0.0023012, 0.00126883, 0.00216372, 0.00150385, 0.00154373, 0.00407043, 0.00369769, 0.0082532, 0.00248318, 0.00382248, 0.00216926, 0.00173694, 0.00859051, 0.000897518, 0.00140187, 0.00203464, 0.00152159, 0.00254708, 0.00244765, 0.00281468, 0.00449348, 0.00237116, 0.00378865, 0.00163593, 0.00197829, 0.0061441, 0.0016435, 0.00196768, 0.00346748, 0.000966363, 0.0014525, 0.00229206
+[Thread 1] Thread Split Time: 0.00372678, 0.002533, 0.00250106, 0.0014888, 0.00189467, 0.000944632, 0.00193225, 0.00145669, 0.00197639, 0.00224109, 0.00349862, 0.00225957, 0.00234495, 0.00173558, 0.00343291, 0.00439562, 0.00242889, 0.00232426, 0.00220718, 0.00152219, 0.00332212, 0.00364681, 0.00386668, 0.0016841, 0.000693263, 0.00425171, 0.0017207, 0.00551969, 0.00144946, 0.00205916, 0.00503064, 0.00288477, 0.00293375, 0.00214582, 0.00242599, 0.00209729, 0.00105199, 0.00221796, 0.0018424, 0.00274468, 0.00216837, 0.00264054, 0.00159813, 0.00295989, 0.00195719, 0.00252713, 0.00353824, 0.00137904, 0.00332966, 0.000857066, 0.00303787, 0.000845639, 0.00209404, 0.00187678, 0.00156086, 0.0012829, 0.00354781, 0.00664568, 0.00195907, 0.00261049, 0.00204847, 0.0026497, 0.000945038, 0.00287666
+[Thread 1] Thread Idle Time: 0.00225217, 0.00366359, 0.00389437, 0.00816981, 0.00470897, 0.00340816, 0.0026858, 0.00172387, 0.00249539, 0.0041465, 0.00357936, 0.00489793, 0.00162089, 0.00269596, 0.00339175, 0.00335739, 0.00272584, 0.00409408, 0.00395067, 0.0033975, 0.00191395, 0.00275542, 0.00263393, 0.00310772, 0.00784742, 0.00467037, 0.00234786, 0.00295207, 0.00477079, 0.00331708, 0.0033032, 0.00318706, 0.00337733, 0.00210363, 0.00387506, 0.00267104, 0.00308833, 0.00276061, 0.000592261, 0.0020708, 0.00361791, 0.00134377, 0.0031826, 0.00201506, 0.00182742, 0.00354856, 0.00637724, 0.00389487, 0.00250114, 0.00247749, 0.00451086, 0.00280121, 0.00343718, 0.00398443, 0.00329149, 0.00362298, 0.00307695, 0.00635124, 0.00361986, 0.00172281, 0.00401039, 0.0046593, 0.00272788, 0.00293089
+[Thread 1] Thread Call Count: 287, 229, 206, 230, 229, 248, 214, 229, 437, 23947, 805, 371, 486, 46508, 111, 58074, 150, 38112, 1573, 83, 84671, 71, 81, 102, 31003, 179, 234, 254, 120, 335, 11203, 1118, 339, 153, 181, 1566, 252, 93726, 145, 119, 327, 2412, 137, 112, 204, 88818, 232, 8359, 751, 381, 281, 1076, 15550, 396, 537, 229, 127, 38440, 289, 135, 611, 545, 279, 207
+[Thread 1] Thread Embedding Count: 212, 158, 166, 189, 184, 206, 180, 196, 365, 19828, 678, 295, 415, 34312, 88, 48513, 127, 26723, 1328, 69, 66454, 62, 67, 84, 19355, 144, 173, 211, 103, 284, 9645, 916, 101, 286, 122, 152, 1225, 212, 80706, 118, 283, 1817, 115, 97, 167, 72411, 199, 7235, 616, 316, 240, 878, 13429, 335, 430, 180, 104, 26041, 220, 114, 479, 475, 222, 163
+[Thread 1] TaskNum: 815
+[Thread 1] Per Call Time (nanoseconds): 26
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 64
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: GQL
+[Thread 1] Order Type: GQL
+[Thread 1] Engine Type: GQL
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] bfsTraversalOrdered time == 7.055e-06
+[Thread 1] computeWorkloadArray time == 0.00011553
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000156707
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000101953
+[Thread 1] Filter vertices time (seconds): 0.00108206
+[Thread 1] Split Qeury Pattern Time: 2.1011e-05
+[Thread 1] Generate query plan time (seconds): 0.000210942
+[Thread 1] Enumerate time (seconds): 0.0693888
+[Thread 1] Preprocessing time (seconds): 0.00139495
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0707838
+[Thread 1] Memory cost (MB): 0.0108452
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 550212
+[Thread 1] Thread Enum Time: 0.0686557, 0.0601708, 0.0601068, 0.0597399, 0.0606975, 0.0598044, 0.0597626, 0.0681512, 0.0600635, 0.05966, 0.05973, 0.0597359, 0.0600936, 0.0596385, 0.0597761, 0.0597199, 0.0595996, 0.0599458, 0.0681421, 0.0597145, 0.0599147, 0.0597608, 0.0683013, 0.0519783, 0.0600157, 0.0597356, 0.0596124, 0.0595437, 0.0599214, 0.0600086, 0.0596186, 0.0597896, 0.0609508, 0.0596196, 0.0663709, 0.0596519, 0.0606188, 0.0599435, 0.0598692, 0.0598635, 0.0597061, 0.0608341, 0.0598687, 0.0593206, 0.0598927, 0.0685517, 0.0605063, 0.0598927, 0.0599126, 0.0598264, 0.0606336, 0.0596341, 0.059934, 0.05993, 0.0599541, 0.05997, 0.0557709, 0.0598093, 0.0599964, 0.0600198, 0.0684123, 0.059712, 0.0599669, 0.0601034
+[Thread 1] Thread Execution Time: 0.0251838, 0.0167842, 0.0199682, 0.0116771, 0.0179982, 0.033408, 0.0237265, 0.00511869, 0.0356846, 0.02606, 0.0134026, 0.00607224, 0.0174956, 0.0168996, 0.0226792, 0.0268961, 0.0209129, 0.0178978, 0.0159864, 0.0486871, 0.0177722, 0.0535498, 0.0363627, 0.0144685, 0.0271777, 0.0227096, 0.0537899, 0.0396752, 0.0269525, 0.050205, 0.0150925, 0.0269022, 0.0184172, 0.031182, 0.00994999, 0.0373918, 0.0246335, 0.0350745, 0.0065492, 0.0208459, 0.0438075, 0.0179925, 0.0123468, 0.033932, 0.0188996, 0.0275225, 0.00522994, 0.0181575, 0.0149537, 0.0421312, 0.0378001, 0.0175801, 0.0196193, 0.0227428, 0.0105023, 0.0142511, 0.00517291, 0.0155437, 0.0268176, 0.0448145, 0.0293238, 0.017903, 0.0150725, 0.0125168
+[Thread 1] Thread Split Time: 0.00980246, 0.00427287, 0.0158258, 0.0179046, 0.0220155, 0.0108037, 0.0290159, 0.0126773, 0.0175193, 0.00147192, 0.0307345, 0.0387552, 0.0241104, 0.0162819, 0.00370251, 0.0130199, 0.0139325, 0.016043, 0.00398554, 0.0119335, 0.036783, 0.0131337, 0.0349529, 0.00960483, 0.0410944, 0.0107888, 0.0364395, 0.0436855, 0.0375057, 0.0228125, 0.0300631, 0.0108989, 0.00522417, 0.0184528, 0.025342, 0.00361637, 0.0187689, 0.0222669, 0.0234232, 0.0245171, 0.0123275, 0.0159932, 0.00673682, 0.017695, 0.0198411, 0.00907876, 0.029229, 0.0320846, 0.0239615, 0.00398377, 0.0108258, 0.00114129, 0.0141569, 0.0408807, 0.0160612, 0.0125756, 0.0112598, 0.0110805, 0.00561269, 0.0253272, 0.0136574, 0.0222205, 0.0168751, 0.00832877
+[Thread 1] Thread Idle Time: 0.049601, 0.0372241, 0.0400926, 0.0148624, 0.0178886, 0.0523149, 0.0427603, 0.0370509, 0.0422189, 0.0535273, 0.0342101, 0.0410463, 0.0420232, 0.0396315, 0.0480428, 0.0159686, 0.0478098, 0.0360094, 0.0456636, 0.0545879, 0.0445632, 0.0422913, 0.0194641, 0.03209, 0.0415782, 0.0543138, 0.0390085, 0.0421107, 0.0328437, 0.0355137, 0.0267629, 0.0546439, 0.0329868, 0.0222467, 0.0354601, 0.0218186, 0.0422096, 0.0458783, 0.0471028, 0.0370471, 0.0417489, 0.0461503, 0.0235808, 0.032967, 0.0418653, 0.0369965, 0.0336564, 0.0329162, 0.045918, 0.0202175, 0.0147618, 0.0248217, 0.0338328, 0.0449589, 0.0447338, 0.0104286, 0.0496842, 0.028752, 0.0431458, 0.0151395, 0.0400017, 0.0373537, 0.0247348, 0.0534472
+[Thread 1] Thread Call Count: 27072, 4241, 1154, 1222, 4495, 1954, 1422, 777, 10538, 6210, 8168, 5298, 7143, 2402, 2492, 635, 13896, 3986, 14334, 26453, 9892, 25793, 1687, 2509, 2482, 9499, 18784, 3127, 1750, 44312, 3191, 9325, 14468, 2256, 1126, 23303, 1666, 6703, 12091, 22214, 10998, 1336, 8374, 19308, 1064, 5315, 1447, 2506, 1986, 3658, 34171, 7751, 2696, 3428, 1637, 3437, 904, 12175, 1208, 9479, 27215, 8524, 7311, 14214
+[Thread 1] Thread Embedding Count: 21858, 3534, 925, 1041, 3547, 1572, 955, 614, 8320, 4993, 6755, 4255, 5759, 1877, 2019, 504, 11396, 3376, 10658, 20728, 8151, 19683, 1405, 1971, 1958, 7703, 15025, 2453, 1219, 36481, 2596, 7765, 11983, 1481, 914, 19316, 1393, 5137, 9815, 17694, 9059, 1063, 6682, 14612, 806, 3921, 1152, 2149, 1550, 2928, 28386, 6160, 10370, 2101, 2600, 1327, 2662, 644, 906, 7835, 21852, 6487, 5962, 11175
+[Thread 1] TaskNum: 2419
+[Thread 1] Per Call Time (nanoseconds): 126
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 64
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: CECI
+[Thread 1] Order Type: CECI
+[Thread 1] Engine Type: CECI
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000286586
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 1.61e-07
+[Thread 1] Filter vertices time (seconds): 0.0012157
+[Thread 1] Split Qeury Pattern Time: 2.1418e-05
+[Thread 1] Generate query plan time (seconds): 0.000349786
+[Thread 1] Enumerate time (seconds): 0.0426652
+[Thread 1] Preprocessing time (seconds): 0.00156565
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0442309
+[Thread 1] Memory cost (MB): 0.00680542
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 566609
+[Thread 1] Thread Enum Time: 0.0415884, 0.0381325, 0.041598, 0.0332765, 0.0327937, 0.0345781, 0.037136, 0.0332436, 0.0368531, 0.0331345, 0.0375708, 0.0327385, 0.0334256, 0.0327282, 0.0361125, 0.0327229, 0.0411043, 0.0331152, 0.0327535, 0.0375521, 0.0368227, 0.0409193, 0.0327081, 0.0374465, 0.0327711, 0.0367982, 0.036937, 0.0371675, 0.0326237, 0.0327586, 0.0327625, 0.0410251, 0.0326315, 0.0409818, 0.0331022, 0.0326563, 0.0328054, 0.038001, 0.0328106, 0.0328631, 0.0329976, 0.0326149, 0.032914, 0.0329742, 0.0390687, 0.0378693, 0.0367201, 0.0330778, 0.0372221, 0.0331105, 0.0332717, 0.0326158, 0.0350719, 0.0292287, 0.0337619, 0.0344359, 0.0372518, 0.0372653, 0.0340073, 0.036923, 0.0332138, 0.0338331, 0.0291029, 0.0339995
+[Thread 1] Thread Execution Time: 0, 7.2841e-05, 5.0767e-05, 9.8952e-05, 8.2025e-05, 0.0150059, 0.00961351, 0.00158057, 0.0269902, 0.0136915, 0.0248184, 0.0128469, 0.0188682, 0.00305178, 0.00717317, 1.8877e-05, 0.0294249, 0.0324079, 6.557e-06, 0.00678171, 0.0023189, 0.00356476, 0.0252023, 0.0191695, 0.000102072, 4.6313e-05, 0.0141445, 0.00351717, 0.00068237, 0.0121603, 9.1626e-05, 6.6721e-05, 2.7491e-05, 0.0280263, 0.000178108, 0.00214901, 2.6556e-05, 0.0147023, 0.0120457, 0.000108595, 0.0144696, 2.1685e-05, 7.0266e-05, 1.9591e-05, 2.6503e-05, 0.0128322, 0.0292926, 0.012061, 0.0219518, 2.1901e-05, 0.0120958, 0.0267797, 5.5979e-05, 0.00010049, 0.000138817, 8.6381e-05, 0.00623522, 0.000264453, 0.000165103, 0.0016067, 6.412e-06, 0.000103862, 0.000332553, 0.000265325
+[Thread 1] Thread Split Time: 0, 3.3811e-05, 2.325e-05, 1.6813e-05, 2.6851e-05, 0.025061, 0.0144156, 0.00100192, 9.2172e-05, 8.7469e-05, 0.0272386, 9.09e-07, 0.000156024, 0.00211313, 0.0254319, 0.00190658, 0.00231303, 0.0141033, 0.00158288, 0.00271735, 1.32e-07, 0.0282058, 0.0145484, 6.5591e-05, 1.7253e-05, 0.0138057, 6.6064e-05, 0.0121049, 0.000661851, 0.00218088, 1.423e-06, 2.8522e-05, 0.0271597, 5.06e-07, 0.0144311, 0.011929, 2.3178e-05, 0.0141689, 7.49e-07, 6.44e-07, 5.63e-07, 0.0127911, 0.0133545, 0.0247091, 6.09e-07, 0.0127777, 0.0120137, 0.0271995, 0.0118973, 0.0136357, 7.8e-08, 0.0254303, 2.23e-07, 7.7528e-05, 5.9171e-05, 4.6565e-05, 0.00148872, 0.000143013, 0.000122698, 0.00124479, 1.86e-07, 0.000158683, 7.0352e-05, 3.5897e-05
+[Thread 1] Thread Idle Time: 0.0211673, 0.0290764, 0.0338331, 0.0211681, 0.0222207, 0.0324849, 0.0273235, 0.0221616, 0.0223286, 0.0327494, 0.0337461, 0.0346737, 0.00815389, 0.0206471, 0.0343226, 0.0327165, 0.0345058, 0.0326243, 0.0224189, 0.0330085, 0.0101458, 0.0330785, 0.0347899, 0.032498, 0.0331156, 0.00814594, 0.00952576, 0.0326868, 0.0330877, 0.0346154, 0.0361708, 0.00919003, 0.032804, 0.0332569, 0.0327116, 0.0344791, 0.00822331, 0.0326521, 0.0206628, 0.0325613, 0.0221136, 0.0330105, 0.0204959, 0.0327591, 0.0238565, 0.0327546, 0.0329469, 0.0323495, 0.0325815, 0.0329477, 0.035504, 0.0355504, 0.0147683, 0.0330559, 0.0341703, 0.0331712, 0.0325598, 0.0082923, 0.0291558, 0.0209149, 0.0207444, 0.0124334, 0.0356848, 0.0338292
+[Thread 1] Thread Call Count: 0, 39, 81, 140, 10, 8151, 6480, 591, 742, 2571, 88, 59, 66817, 8515, 66844, 4, 4706, 73308, 14, 60725, 806, 39099, 58, 65033, 24, 21, 4050, 14744, 3256, 70, 68, 7, 8, 9723, 47, 6729, 9, 2339, 51, 30, 2729, 14, 32, 22, 16, 19, 29575, 33, 10474, 4, 42, 7616, 7, 30, 54, 45, 65246, 47, 26, 4384, 3, 61, 49, 24
+[Thread 1] Thread Embedding Count: 0, 32, 61, 108, 5, 6451, 4914, 452, 612, 1981, 66, 46, 52405, 6852, 52418, 3, 3429, 58893, 8, 45728, 582, 29377, 43, 50312, 18, 13, 3230, 11568, 2745, 59, 49, 4, 4, 7358, 32, 5301, 4, 1699, 39, 25, 2311, 8, 25, 18, 9, 9, 23256, 18, 8269, 3, 26, 5794, 4, 24, 38, 37, 50818, 32, 18, 3475, 2, 53, 30, 15
+[Thread 1] TaskNum: 644
+[Thread 1] Per Call Time (nanoseconds): 75
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 64
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: DPiso
+[Thread 1] Engine Type: DPiso
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000207832
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000164188
+[Thread 1] Filter vertices time (seconds): 0.00054902
+[Thread 1] Split Qeury Pattern Time: 2.0301e-05
+[Thread 1] Generate query plan time (seconds): 0.000240093
+[Thread 1] Enumerate time (seconds): 0.04193
+[Thread 1] Preprocessing time (seconds): 0.000953301
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0428833
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 504019
+[Thread 1] Thread Enum Time: 0.0256279, 0.0335056, 0.0343996, 0.0404511, 0.0328213, 0.0327419, 0.0310213, 0.0256376, 0.033266, 0.0332533, 0.0327202, 0.0326353, 0.0330948, 0.0333675, 0.0326206, 0.0335981, 0.0322774, 0.0323783, 0.0246478, 0.0401001, 0.0327163, 0.0410052, 0.0324817, 0.0325129, 0.0328286, 0.0406157, 0.0283724, 0.0324699, 0.0399452, 0.0330651, 0.0323769, 0.0325315, 0.0244753, 0.0323969, 0.0324435, 0.0324864, 0.0328983, 0.0326495, 0.024724, 0.0329583, 0.033198, 0.0328706, 0.0329895, 0.0329857, 0.0306925, 0.0330414, 0.0325792, 0.0334, 0.0330074, 0.0331062, 0.0406148, 0.0331219, 0.0329534, 0.0330756, 0.0332716, 0.0332615, 0.0292052, 0.0388453, 0.0327444, 0.0253812, 0.0331818, 0.0331264, 0.0330564, 0.0333677
+[Thread 1] Thread Execution Time: 0.0199934, 0.000853718, 0.00469969, 0.00481716, 1.454e-05, 0.00428686, 0.00958664, 0.00210448, 0.00253112, 0.00111224, 0.00311065, 0.0171983, 0.00339444, 0.00921453, 0.00335621, 0.0136162, 0.0117014, 0.00792994, 0.00263676, 0.00397699, 0.00345481, 0.0136212, 0.0135772, 0.0161491, 0.00403671, 0.0120362, 0.00210853, 0.0151197, 0.00209635, 0.01202, 0.00162232, 0.00654989, 0.00175489, 0.00207617, 0.00108741, 0.00188547, 0.000821123, 0.00557066, 0.00275412, 0.0131176, 0.00327853, 0.000348073, 0.00450662, 0.00539923, 0.0198225, 0.0123401, 0.00652652, 0.00434516, 0.0116807, 0.00187861, 0.017257, 0.00567624, 0.000770159, 0.0075441, 0.0180428, 0.00419755, 0.00188715, 0.000334599, 0.0039308, 0.00188768, 0.00229489, 0.00302471, 0.00600309, 0.00599475
+[Thread 1] Thread Split Time: 0.00284557, 0.000607881, 0.00303818, 0, 0.00199708, 0.0131028, 0.000693806, 0.000283705, 0.00122722, 0.00170696, 0.00611738, 0.00889586, 0.00115901, 0.00435143, 0.00128949, 0.00129864, 0.000377174, 0.000879947, 0.0087851, 0.00313335, 0.00340345, 0.00149622, 0.00250821, 0.00641821, 0.00301579, 0.00160308, 0.00214192, 0.014947, 0.00289472, 0.00763351, 0.0110117, 0.000242645, 0.000994599, 7.1902e-05, 0.0030765, 0.0092189, 0.00079912, 0.011391, 0.0185136, 0.00303338, 0.00027285, 0.00511299, 0.00145607, 0.00451621, 0.00233258, 3.2205e-05, 0.00284461, 0.00114188, 0.0003538, 0.00474456, 0.015068, 0.00518596, 0.00146282, 0.000564526, 0.00358353, 0.000181871, 0.00110384, 0.00254121, 0.00132582, 0.000397013, 0.00390346, 0.00255227, 0.00624468, 0.00355668
+[Thread 1] Thread Idle Time: 0.0322803, 0.0313016, 0.0310502, 0.026632, 0.0304226, 0.0299985, 0.0220573, 0.0230255, 0.0289691, 0.0306078, 0.0204617, 0.0304166, 0.0200382, 0.0218967, 0.0243475, 0.0190044, 0.0209282, 0.0322553, 0.0305637, 0.0204576, 0.0136831, 0.0208283, 0.0316997, 0.026324, 0.0296103, 0.0287919, 0.0244666, 0.0289168, 0.0231552, 0.0278541, 0.0283147, 0.0313784, 0.0233427, 0.0196026, 0.0315232, 0.0283339, 0.0225881, 0.0323824, 0.0281567, 0.0321383, 0.0296198, 0.0216993, 0.0266548, 0.0269552, 0.0215173, 0.0309851, 0.0321684, 0.0295913, 0.021478, 0.0296852, 0.0162017, 0.0294685, 0.0274367, 0.0312276, 0.0270376, 0.0303678, 0.0286083, 0.026549, 0.0284545, 0.0160045, 0.023529, 0.0237256, 0.0214504, 0.0324098
+[Thread 1] Thread Call Count: 42829, 231, 8837, 1643, 21, 1316, 1266, 1555, 746, 633, 3842, 20489, 850, 3837, 1504, 529, 1192, 760, 3694, 5490, 854, 43513, 43740, 82204, 481, 42695, 1810, 26162, 1861, 12629, 2638, 2345, 705, 1655, 1197, 3529, 1285, 4296, 2127, 847, 3206, 324, 817, 272, 1164, 665, 316, 3085, 20842, 770, 9065, 57136, 2321, 6096, 1321, 1642, 665, 262, 1156, 1194, 1006, 6962, 2239, 3656
+[Thread 1] Thread Embedding Count: 37549, 205, 8086, 1425, 19, 1160, 1098, 1413, 677, 569, 3345, 18643, 730, 3270, 1356, 463, 1005, 670, 3231, 4479, 758, 37347, 38768, 71847, 435, 36019, 1632, 21432, 1676, 11283, 2344, 2012, 625, 1512, 1050, 3122, 1182, 3716, 1905, 746, 2834, 285, 729, 243, 1038, 590, 271, 2797, 18593, 688, 8079, 50903, 2119, 5393, 1207, 1456, 598, 213, 1048, 1075, 906, 6214, 1862, 3273
+[Thread 1] TaskNum: 1480
+[Thread 1] Per Call Time (nanoseconds): 83
+[Thread 1] Overtime: 0
+[Thread 1] End the query
+[Thread 1] Start the query
+[Thread 1] Input Query Graph File: ../../datasets/HPRD/L15/Q10/Q10-7.txt
+[Thread 1] Input Data Graph File: HPRD/L15/HPRD-15.txt
+[Thread 1] Maximum Embedding Number: MAX
+[Thread 1] Time Limit: 2
+[Thread 1] Num Threads: 64
+[Thread 1] Split Type: linear
+[Thread 1] Schedule Type: busy2idlenostop
+[Thread 1] Filter Type: DPiso
+[Thread 1] Order Type: CIRCINUS
+[Thread 1] Engine Type: CIRCINUS
+[Thread 1] Output Limit: 9223372036854775807
+[Thread 1] -----
+[Thread 1] Build indices...
+[Thread 1] -----
+[Thread 1] Generate a matching order...
+[Thread 1] subgraph count == 1
+[Thread 1] subgraph 0 vertices count == 10
+[Thread 1] -----
+[Thread 1] Enumerate...
+[Thread 1] schedule_type == busy2idlenostop
+[Thread 1] split_type == linear
+[Thread 1] InitTasks time: 0.000373223
+[Thread 1] Load graphs time (seconds): 0.02783
+[Thread 1] Build table time (seconds): 0.000209902
+[Thread 1] Filter vertices time (seconds): 0.00056443
+[Thread 1] Split Qeury Pattern Time: 2.3118e-05
+[Thread 1] Generate query plan time (seconds): 0.000245493
+[Thread 1] Enumerate time (seconds): 0.0490199
+[Thread 1] Preprocessing time (seconds): 0.00101983
+[Thread 1] Join time (seconds): 0
+[Thread 1] Total time (seconds): 0.0500397
+[Thread 1] Memory cost (MB): 0.0107384
+[Thread 1] #Embeddings: 441218
+[Thread 1] Call Count: 85092
+[Thread 1] Thread Enum Time: 0.0369944, 0.040657, 0.0400394, 0.0400196, 0.0404645, 0.0404911, 0.0399339, 0.0399205, 0.0361547, 0.0398517, 0.0400143, 0.0399055, 0.0398446, 0.0398405, 0.0324453, 0.0399457, 0.0406976, 0.0396315, 0.0336355, 0.0468391, 0.0396501, 0.0471392, 0.0363357, 0.039973, 0.0479167, 0.0370572, 0.0396446, 0.0472356, 0.0399359, 0.0403618, 0.0396461, 0.0397192, 0.0453709, 0.0397926, 0.0398718, 0.0398063, 0.0367431, 0.0398313, 0.040382, 0.0400542, 0.0400968, 0.0474031, 0.0402973, 0.0361376, 0.0404608, 0.0402184, 0.0357303, 0.0403077, 0.0403261, 0.0406062, 0.0362961, 0.0403527, 0.0368525, 0.0403834, 0.0405021, 0.0363204, 0.0365458, 0.0322326, 0.0401331, 0.040538, 0.0369113, 0.0364077, 0.0405735, 0.0479636
+[Thread 1] Thread Execution Time: 0.0467805, 0.0335442, 0.0189229, 0.0201081, 0.00738286, 0.033836, 0.0148586, 0.0117655, 0.023983, 0.0230639, 0.0121818, 0.00550184, 0.00797265, 0.0258564, 0.000582339, 0.019089, 0.0393986, 0.0239353, 0.029579, 0.0273404, 0.0313797, 0.014824, 0.0195969, 0.0243781, 0.0183655, 0.0190581, 0.0185669, 0.0208866, 0.0210993, 0.0189222, 0.0313076, 0.0180247, 0.0466713, 0.023321, 0.0257307, 0.0296507, 0.0274108, 0.0212025, 0.0194056, 0.0321128, 0.0181917, 0.0261056, 0.00618224, 0.00596535, 0.0382948, 0.0320636, 0.0243513, 0.029077, 0.0174409, 0.00374529, 0.02705, 0.00878324, 0.0301326, 0.036274, 0.0211264, 0.0252362, 0.014504, 0.0172599, 0.022292, 0.0256898, 0.0261661, 0.0237145, 0.0229546, 0.0374879
+[Thread 1] Thread Split Time: 0.0174942, 0.0167742, 0.015862, 0.0190763, 0.00956213, 0.00929027, 0.00704842, 0.0157247, 0.012946, 0.00130708, 0.0256126, 0.0301872, 0.017437, 0.024068, 0.000211315, 0.018292, 0.0137612, 0.0146353, 0.0296917, 0.00614049, 0.0336088, 0.022671, 0.0179419, 0.0294442, 0.017885, 0.0272574, 0.0191111, 0.0171108, 0.0256916, 0.0185027, 0.0187191, 0.0178099, 0.0171478, 0.0242817, 0.0197279, 0.0128176, 0.0267768, 0.0211423, 0.0286495, 0.00796639, 0.0188089, 0.00434899, 0.00279503, 0.0200921, 0.0164157, 0.0267494, 0.0216429, 0.0196709, 0.023995, 0.0308842, 0.019423, 0.0198815, 0.00397916, 0.0248566, 0.0232527, 0.0204958, 0.0240602, 0.0243286, 0.0173257, 0.0305303, 0.0175826, 0.0168064, 0.030654, 0.0206495
+[Thread 1] Thread Idle Time: 0.00118303, 0.016859, 0.0102416, 0.0138474, 0.021795, 0.00851815, 0.0160377, 0.0357533, 0.0157596, 0.0339705, 0.00894076, 0.0316774, 0.0149669, 0.00998089, 0.0155676, 0.00629632, 0.0123372, 0.0179053, 0.0324688, 0.00617833, 0.000167802, 0.0103144, 0.0218958, 0.00934937, 0.0215799, 0.0189401, 0.0122338, 0.0158546, 0.025161, 0.00707776, 0.0164815, 0.0127946, 0.0361602, 0.0287257, 0.020337, 0.0334638, 0.0136136, 0.00788304, 0.0168381, 0.0343699, 0.0249824, 0.00661046, 0.031048, 0.0214591, 0.0278724, 0.0192103, 0.0178242, 0.0129569, 0.0102812, 0.0259568, 0.0229585, 0.0173648, 0.0212496, 0.0228853, 0.022161, 0.00418328, 0.0212006, 0.0145605, 0.0146935, 0.00425688, 0.0121945, 0.00426399, 0.0111062, 0.0148969
+[Thread 1] Thread Call Count: 3921, 1681, 532, 867, 414, 1749, 747, 507, 2259, 796, 1039, 1054, 357, 688, 103, 301, 4709, 368, 5437, 595, 4890, 402, 2043, 2389, 183, 763, 313, 425, 414, 503, 386, 608, 7074, 627, 2056, 759, 1252, 1557, 641, 571, 320, 449, 852, 557, 6416, 551, 1471, 2163, 524, 930, 515, 259, 534, 1948, 600, 405, 580, 578, 962, 425, 2881, 354, 580, 4258
+[Thread 1] Thread Embedding Count: 26419, 4435, 5740, 2748, 1980, 4014, 3551, 1603, 6060, 3268, 6040, 5629, 1441, 2056, 239, 905, 38398, 1102, 21265, 6200, 25095, 923, 6445, 11925, 375, 2001, 1483, 2148, 2271, 2500, 2311, 1585, 47279, 2872, 13241, 4220, 3050, 6410, 2538, 2532, 1449, 2224, 5406, 2906, 34854, 3325, 7855, 15199, 2418, 3921, 4396, 813, 1538, 7440, 2881, 1612, 2736, 1348, 3138, 1281, 22757, 1042, 2403, 23979
+[Thread 1] TaskNum: 837
+[Thread 1] Per Call Time (nanoseconds): 576
+[Thread 1] Overtime: 0
+[Thread 1] End the query

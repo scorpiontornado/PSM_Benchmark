@@ -1,0 +1,10 @@
+Max memory usage: 16.41 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-1.txt
+Max memory usage: 8.52 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-2.txt
+Max memory usage: 11.92 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-3.txt
+Max memory usage: 15.36 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-4.txt
+Max memory usage: 27.68 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-5.txt
+Max memory usage: 1.00 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-6.txt
+Max memory usage: 31.31 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-7.txt
+Max memory usage: 1.00 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-8.txt
+Max memory usage: 17.30 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-9.txt
+Max memory usage: 27.15 MB | Schedule: busy2idlenostop | Split Type: linear | Data Graph: HPRD-15 | Query Graph: Q10/Q10-10.txt
