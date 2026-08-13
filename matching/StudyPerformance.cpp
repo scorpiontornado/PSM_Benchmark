@@ -14,6 +14,7 @@
 #include "BuildTable.h"
 #include "GenerateQueryPlan.h"
 #include "EvaluateQuery.h"
+#include "Materializer.h"
 #include "TaskPool.h"
 
 std::vector<std::string> split(const std::string& s, char delimiter) {
@@ -24,6 +25,19 @@ std::vector<std::string> split(const std::string& s, char delimiter) {
         tokens.push_back(token);
     }
     return tokens;
+}
+
+void setMaterializeMode(const std::string& input_materialize) {
+    if (input_materialize == "none") {
+        MATERIALIZE_MODE = MaterializeMode::MAT_NONE;
+    } else if (input_materialize == "globallock") {
+        MATERIALIZE_MODE = MaterializeMode::MAT_GLOBAL_LOCK;
+    } else if (input_materialize == "threadlocal") {
+        MATERIALIZE_MODE = MaterializeMode::MAT_THREAD_LOCAL;
+    } else {
+        LOG() << "Error: The materialize type is not defined." << std::endl;
+        abort();
+    }
 }
 
 // std::string extract_graph_file(std::string input_file, int num) {
@@ -112,6 +126,7 @@ void split_Q_test(MatchingCommand& command) {
 
     std::string input_Qpattern_split = command.getQpatternType();
     std::string input_join_paradigm = command.getJoinMethod();
+    setMaterializeMode(command.getMaterializeType());
 
     std::set<std::string> incompatible_set{};
     std::set<std::string> wanted_set{};
@@ -737,6 +752,9 @@ for (auto& method_type : backMethods) {
     int64_t queue_capacity = num_threads * 2;
     TaskPool* taskPool = new TaskPool(num_threads, queue_capacity);
 
+    // Keep the previous round (thread count / back method) out of these statistics
+    Materializer::reset();
+
     // TODO: split_type and schedule_type
     if (engine_type == "LFTJ") {
         EvaluateQuery::enum_method = [taskPool](TaskSlot& task, int task_id) { EvaluateQuery::LFTJ(taskPool, task, task_id); };
@@ -766,6 +784,8 @@ for (auto& method_type : backMethods) {
 
     end = std::chrono::steady_clock::now();
     int64_t enumeration_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+    Materializer::logStatistics();
 
     if (FilterVertices::checkOverTime()) {
         int64_t total_time_in_ns = filter_vertices_time_in_ns + build_table_time_in_ns + split_query_time_in_ns + generate_query_plan_time_in_ns + enumeration_time_in_ns;
@@ -963,6 +983,7 @@ void split_C_test(MatchingCommand& command) {
 
     std::string input_Qpattern_split = command.getQpatternType();
     std::string input_join_paradigm = command.getJoinMethod();
+    setMaterializeMode(command.getMaterializeType());
 
     // std::cout << "log all inputs" << std::endl;
     // std::cout << "input_query_graph_file : " << input_query_graph_file << std::endl;
@@ -1688,6 +1709,9 @@ for (auto& method_type : backMethods) {
     std::string input_type_split = command.getSplitType();
     std::string input_type_schedule = command.getScheduleType();
 
+    // Keep the previous round (thread count / back method) out of these statistics
+    Materializer::reset();
+
     // TODO: split_type and schedule_type
     if (engine_type == "LFTJ") {
         EvaluateQuery::enum_method = [taskPool](TaskSlot& task, int task_id) { EvaluateQuery::LFTJ(taskPool, task, task_id); };
@@ -1716,6 +1740,8 @@ for (auto& method_type : backMethods) {
     }
     end = std::chrono::steady_clock::now();
     int64_t enumeration_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+    Materializer::logStatistics();
 
     // LOG() << "over backtracking" << std::endl;
 

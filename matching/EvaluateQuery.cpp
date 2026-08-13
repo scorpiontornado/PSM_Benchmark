@@ -1,4 +1,5 @@
 #include "EvaluateQuery.h"
+#include "Materializer.h"
 #include "utility/computesetintersection.h"
 #include "utility/pretty_print.h"
 #include <vector>
@@ -306,6 +307,7 @@ EvaluateQuery::LFTJ(TaskPool* taskPool, TaskSlot& task, int task_id) {
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
+                Materializer::record(embedding, max_depth);
 
                 if (TaskSlot::g_args->splitMode == Q) {
                     // std::ostringstream osst;
@@ -800,6 +802,7 @@ EvaluateQuery::exploreCircinusStyle(TaskPool* taskPool, TaskSlot& task, int task
                     // LOG() << "frozen_count == " << frozen_count << std::endl;
                     if (frozen_count == 0) {
                         l_embedding_count += 1;
+                        Materializer::record(embedding, max_depth);
                         if (TaskSlot::g_args->splitMode == Q) {
                             u_args->addPartialMatch(embedding);
                         }
@@ -888,6 +891,7 @@ EvaluateQuery::exploreCircinusStyle(TaskPool* taskPool, TaskSlot& task, int task
                     // LOG() << "frozen_count == " << frozen_count << std::endl;
                     if (frozen_count == 0) {
                         l_embedding_count += 1;
+                        Materializer::record(embedding, max_depth);
                     if (TaskSlot::g_args->splitMode == Q) {
                         u_args->addPartialMatch(embedding);
                     }
@@ -1020,6 +1024,7 @@ EvaluateQuery::exploreGraphQLStyle(TaskPool* taskPool, TaskSlot& task, int task_
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
+                Materializer::record(embedding, max_depth);
                 if (TaskSlot::g_args->splitMode == Q) {
                     u_args->addPartialMatch(embedding);
                 }
@@ -1094,6 +1099,7 @@ EvaluateQuery::exploreGraph(TaskPool* taskPool, TaskSlot& task, int task_id) {
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
+                Materializer::record(embedding, max_depth);
                 if (TaskSlot::g_args->splitMode == Q) {
                     u_args->addPartialMatch(embedding);
                 }
@@ -1330,6 +1336,7 @@ if (FAILING_SET_FLAG && !task_splited_flag) {
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
+                Materializer::record(embedding, max_depth);
                 if (TaskSlot::g_args->splitMode == Q) {
                     u_args->addPartialMatch(embedding);
                 }
@@ -1506,6 +1513,7 @@ EvaluateQuery::exploreCECIStyle(TaskPool* taskPool, TaskSlot& task, int task_id)
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
+                Materializer::record(embedding, max_depth);
                 if (TaskSlot::g_args->splitMode == Q) {
                     u_args->addPartialMatch(embedding);
                 }

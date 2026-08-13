@@ -25,6 +25,7 @@ MatchingCommand::MatchingCommand(const int argc, char **argv) : CommandParser(ar
     options_key[OptionKeyword::QpatternType] = "-Qpattern";
     options_key[OptionKeyword::JoinMethodType] = "-JoinMethod";
     options_key[OptionKeyword::BackMethodTypes] = "-BackMethods";
+    options_key[OptionKeyword::MaterializeType] = "-materialize";
     processOptions();
 };
 
@@ -97,6 +98,9 @@ void MatchingCommand::processOptions() {
 
     // Joinmethod Types
     options_value[OptionKeyword::BackMethodTypes] = getCommandOption(options_key[OptionKeyword::BackMethodTypes]);
+
+    // Materialize Type
+    options_value[OptionKeyword::MaterializeType] = getCommandOption(options_key[OptionKeyword::MaterializeType]);
 }
 
 void MatchingCommand::printCommandOptions() {

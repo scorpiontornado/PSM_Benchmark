@@ -12,6 +12,7 @@ set(SUBGRAPH_MATCHING_FILE_LIST
     GenerateFilteringPlan.cpp
     GenerateFilteringPlan.h
     TaskPool.cpp
+    Materializer.cpp
     Args.cpp
     JoinCollect.cpp
 )

@@ -1,6 +1,6 @@
 {
     "cmake.buildArgs": ["-j 16"],
-    "cmake.sourceDirectory": "/root/yt/subgraph/code/PRSF",
+    "cmake.sourceDirectory": "/Users/nicholas/Developer/PSM_Benchmark",
     "files.associations": {
         "new": "cpp",
         "chrono": "cpp",
