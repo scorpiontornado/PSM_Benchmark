@@ -127,6 +127,13 @@ void split_Q_test(MatchingCommand& command) {
     std::string input_Qpattern_split = command.getQpatternType();
     std::string input_join_paradigm = command.getJoinMethod();
     setMaterializeMode(command.getMaterializeType());
+    if (MATERIALIZE_MODE != MaterializeMode::MAT_NONE) {
+        // QSplit already stores every embedding through UnitArgs::addPartialMatch,
+        // because the join phase reads them back. A second sink would only double
+        // the storage, so the probe is GSplit-only.
+        LOG() << "Warning: -materialize applies to -QorCandi C only; ignored here." << std::endl;
+        MATERIALIZE_MODE = MaterializeMode::MAT_NONE;
+    }
 
     std::set<std::string> incompatible_set{};
     std::set<std::string> wanted_set{};

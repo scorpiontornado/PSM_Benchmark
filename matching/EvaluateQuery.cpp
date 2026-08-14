@@ -601,6 +601,8 @@ EvaluateQuery::bsxGenResult(TaskSlot& task, ui *indep_con_cnt, ui** sep_flag, ui
     }
 
     int64_t& l_embedding_count = task.l_args->l_embedding_count;
+    // Counts a whole compressed group without ever forming the individual
+    // embeddings, so there is nothing for Materializer::record to store here.
     l_embedding_count += embedding_cnt;
     for (ui u = 0; u < FU_fns.size(); ++u) {
         if (FU_fns.find(u) == FU_fns.end()) {

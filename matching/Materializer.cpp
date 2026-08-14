@@ -45,11 +45,7 @@ ThreadSink* acquireSink(int length) {
 } // namespace
 
 void
-Materializer::record(const ui* embedding, int length) {
-    if (MATERIALIZE_MODE == MaterializeMode::MAT_NONE) {
-        return;
-    }
-
+Materializer::store(const ui* embedding, int length) {
     if (MATERIALIZE_MODE == MaterializeMode::MAT_GLOBAL_LOCK) {
         std::unique_lock<std::mutex> lock(g_store_mutex);
         g_store.insert(g_store.end(), embedding, embedding + length);
@@ -130,7 +126,11 @@ Materializer::logStatistics() {
         }
     }
 
-    LOG() << "Materialize mode: " << MATERIALIZE_MODE
+    const char* mode_name = MATERIALIZE_MODE == MaterializeMode::MAT_GLOBAL_LOCK   ? "globallock"
+                            : MATERIALIZE_MODE == MaterializeMode::MAT_THREAD_LOCAL ? "threadlocal"
+                                                                                    : "none";
+
+    LOG() << "Materialize mode: " << mode_name
           << ", stored embeddings: " << storedCount()
           << ", stored bytes: " << storedBytes()
           << ", worker sinks: " << sink_count
