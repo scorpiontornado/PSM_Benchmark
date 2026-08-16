@@ -27,15 +27,24 @@ std::vector<std::string> split(const std::string& s, char delimiter) {
     return tokens;
 }
 
-void setMaterializeMode(const std::string& input_materialize) {
-    if (input_materialize == "none") {
-        MATERIALIZE_MODE = MaterializeMode::MAT_NONE;
-    } else if (input_materialize == "globallock") {
-        MATERIALIZE_MODE = MaterializeMode::MAT_GLOBAL_LOCK;
-    } else if (input_materialize == "threadlocal") {
-        MATERIALIZE_MODE = MaterializeMode::MAT_THREAD_LOCAL;
+void setResultMode(const std::string& input_mode) {
+    if (input_mode == "count") {
+        RESULT_MODE = ResultMode::RESULT_COUNT;
+    } else if (input_mode == "match") {
+        RESULT_MODE = ResultMode::RESULT_MATCH;
     } else {
-        LOG() << "Error: The materialize type is not defined." << std::endl;
+        LOG() << "Error: The result mode is not defined." << std::endl;
+        abort();
+    }
+}
+
+void setSinkType(const std::string& input_sink) {
+    if (input_sink == "globallock") {
+        SINK_TYPE = SinkType::SINK_GLOBAL_LOCK;
+    } else if (input_sink == "threadlocal") {
+        SINK_TYPE = SinkType::SINK_THREAD_LOCAL;
+    } else {
+        LOG() << "Error: The sink type is not defined." << std::endl;
         abort();
     }
 }
@@ -126,13 +135,13 @@ void split_Q_test(MatchingCommand& command) {
 
     std::string input_Qpattern_split = command.getQpatternType();
     std::string input_join_paradigm = command.getJoinMethod();
-    setMaterializeMode(command.getMaterializeType());
-    if (MATERIALIZE_MODE != MaterializeMode::MAT_NONE) {
-        // QSplit already stores every embedding through UnitArgs::addPartialMatch,
-        // because the join phase reads them back. A second sink would only double
-        // the storage, so the probe is GSplit-only.
-        LOG() << "Warning: -materialize applies to -QorCandi C only; ignored here." << std::endl;
-        MATERIALIZE_MODE = MaterializeMode::MAT_NONE;
+    setResultMode(command.getResultMode());
+    setSinkType(command.getSinkType());
+    if (RESULT_MODE == ResultMode::RESULT_COUNT) {
+        // The join phase consumes the per-unit tables and produces nothing
+        // without them, so counting is not implementable under QSplit.
+        LOG() << "Error: -mode count is not supported under -QorCandi Q." << std::endl;
+        abort();
     }
 
     std::set<std::string> incompatible_set{};
@@ -590,6 +599,7 @@ for (auto& method_type : backMethods) {
 
     TaskSlot::g_args->unitArgsVec = unitArgsVec;
     TaskSlot::g_args->count_unit = multigraphs->getSubgraphCount();
+    Materializer::init(unitArgsVec, multigraphs->getSubgraphCount());
 
     bool needPivot = false;
     bool needBN = true;
@@ -792,6 +802,15 @@ for (auto& method_type : backMethods) {
     end = std::chrono::steady_clock::now();
     int64_t enumeration_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
+    // A thread-local sink moves delivery cost off the critical path onto this
+    // step, so it is timed separately and reported alongside the enumeration.
+    // It must finish before JoinCollect reads the per-unit tables.
+    start = std::chrono::steady_clock::now();
+    Materializer::consolidate();
+    end = std::chrono::steady_clock::now();
+    int64_t consolidation_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    LOG() << "Consolidation time (seconds): " << NANOSECTOSEC(consolidation_time_in_ns) << std::endl;
+
     Materializer::logStatistics();
 
     if (FilterVertices::checkOverTime()) {
@@ -990,7 +1009,8 @@ void split_C_test(MatchingCommand& command) {
 
     std::string input_Qpattern_split = command.getQpatternType();
     std::string input_join_paradigm = command.getJoinMethod();
-    setMaterializeMode(command.getMaterializeType());
+    setResultMode(command.getResultMode());
+    setSinkType(command.getSinkType());
 
     // std::cout << "log all inputs" << std::endl;
     // std::cout << "input_query_graph_file : " << input_query_graph_file << std::endl;
@@ -1409,6 +1429,7 @@ for (auto& method_type : backMethods) {
 
     TaskSlot::g_args->unitArgsVec = unitArgsVec;
     TaskSlot::g_args->count_unit = multigraphs->getSubgraphCount();
+    Materializer::init(unitArgsVec, multigraphs->getSubgraphCount());
 
     bool needPivot = false;
     bool needBN = true;
@@ -1747,6 +1768,14 @@ for (auto& method_type : backMethods) {
     }
     end = std::chrono::steady_clock::now();
     int64_t enumeration_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+    // A thread-local sink moves delivery cost off the critical path onto this
+    // step, so it is timed separately and reported alongside the enumeration.
+    start = std::chrono::steady_clock::now();
+    Materializer::consolidate();
+    end = std::chrono::steady_clock::now();
+    int64_t consolidation_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    LOG() << "Consolidation time (seconds): " << NANOSECTOSEC(consolidation_time_in_ns) << std::endl;
 
     Materializer::logStatistics();
 

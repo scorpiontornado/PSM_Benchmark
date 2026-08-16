@@ -307,25 +307,7 @@ EvaluateQuery::LFTJ(TaskPool* taskPool, TaskSlot& task, int task_id) {
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
-                Materializer::record(embedding, max_depth);
-
-                if (TaskSlot::g_args->splitMode == Q) {
-                    // std::ostringstream osst;
-                    // osst << "embedding: ";
-                    // for (int i = 0; i < max_depth; i++) {
-                    //     osst << embedding[i] << ", ";
-                    // }
-                    // osst << std::endl;
-
-                    // LOG() << "embedding: ";
-                    // for (int i = 0; i < max_depth; i++) {
-                    //     LOG() << embedding[i] << ", ";
-                    // }
-                    // LOG() << std::endl;
-
-                    // LOG() << osst.str();
-                    u_args->addPartialMatch(embedding);
-                }
+                Materializer::record(id_unit, embedding, max_depth);
                 // std::ostringstream oss;
                 // oss << "get an embedding: ";
                 // for (int i = 0; i < max_depth; i++) {
@@ -804,10 +786,7 @@ EvaluateQuery::exploreCircinusStyle(TaskPool* taskPool, TaskSlot& task, int task
                     // LOG() << "frozen_count == " << frozen_count << std::endl;
                     if (frozen_count == 0) {
                         l_embedding_count += 1;
-                        Materializer::record(embedding, max_depth);
-                        if (TaskSlot::g_args->splitMode == Q) {
-                            u_args->addPartialMatch(embedding);
-                        }
+                        Materializer::record(id_unit, embedding, max_depth);
                     } else {
                         bsxGenResult(task, indep_con_cnt, sep_flag, bsxidx, cnt, un_con_cnt, embedding_level);
                         if (taskPool->checkOverTime()) {
@@ -893,10 +872,7 @@ EvaluateQuery::exploreCircinusStyle(TaskPool* taskPool, TaskSlot& task, int task
                     // LOG() << "frozen_count == " << frozen_count << std::endl;
                     if (frozen_count == 0) {
                         l_embedding_count += 1;
-                        Materializer::record(embedding, max_depth);
-                    if (TaskSlot::g_args->splitMode == Q) {
-                        u_args->addPartialMatch(embedding);
-                    }
+                        Materializer::record(id_unit, embedding, max_depth);
                     } else {
                         bsxGenResult(task, indep_con_cnt, sep_flag, bsxidx, cnt, un_con_cnt, embedding_level);
                         if (taskPool->checkOverTime()) {
@@ -1026,10 +1002,7 @@ EvaluateQuery::exploreGraphQLStyle(TaskPool* taskPool, TaskSlot& task, int task_
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
-                Materializer::record(embedding, max_depth);
-                if (TaskSlot::g_args->splitMode == Q) {
-                    u_args->addPartialMatch(embedding);
-                }
+                Materializer::record(id_unit, embedding, max_depth);
                 visited_vertices[v] = false;
                 if (l_embedding_count >= l_limit_num) {
                     // TODO: handleResponse();
@@ -1101,10 +1074,7 @@ EvaluateQuery::exploreGraph(TaskPool* taskPool, TaskSlot& task, int task_id) {
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
-                Materializer::record(embedding, max_depth);
-                if (TaskSlot::g_args->splitMode == Q) {
-                    u_args->addPartialMatch(embedding);
-                }
+                Materializer::record(id_unit, embedding, max_depth);
                 visited_vertices[v] = false;
                 if (l_embedding_count >= l_limit_num) {
                     // TODO: handleResponse();
@@ -1338,10 +1308,7 @@ if (FAILING_SET_FLAG && !task_splited_flag) {
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
-                Materializer::record(embedding, max_depth);
-                if (TaskSlot::g_args->splitMode == Q) {
-                    u_args->addPartialMatch(embedding);
-                }
+                Materializer::record(id_unit, embedding, max_depth);
                 visited_vertices[v] = false;
                 // oss << "get an embedding: ";
                 // for (int i = 0; i < max_depth; i++) {
@@ -1515,10 +1482,7 @@ EvaluateQuery::exploreCECIStyle(TaskPool* taskPool, TaskSlot& task, int task_id)
 
             if (cur_depth == max_depth - 1) {
                 l_embedding_count += 1;
-                Materializer::record(embedding, max_depth);
-                if (TaskSlot::g_args->splitMode == Q) {
-                    u_args->addPartialMatch(embedding);
-                }
+                Materializer::record(id_unit, embedding, max_depth);
                 visited_vertices[v] = false;
                 if (l_embedding_count >= l_limit_num) {
                     handleTaskResp(l_embedding_count, l_call_count, start_time_exec);

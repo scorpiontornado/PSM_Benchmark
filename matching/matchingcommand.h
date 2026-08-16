@@ -52,7 +52,8 @@ enum OptionKeyword {
     QpatternType = 19,                   // -Qpattern, STAR or CHAIN
     JoinMethodType = 20,                  // -JoinMethod, LEFTDEEP or RIGHTDEEP
     BackMethodTypes = 21,                 // -BackMethod, DPiso or CIRCINUS
-    MaterializeType = 22                  // -materialize, none | globallock | threadlocal
+    ResultModeType = 22,                  // -mode, count | match
+    ResultSinkType = 23                   // -sink, threadlocal | globallock
 };
 
 class MatchingCommand : public CommandParser{
@@ -159,8 +160,12 @@ public:
         return options_value[OptionKeyword::BackMethodTypes] == "" ? "DPiso" : options_value[OptionKeyword::BackMethodTypes];
     }
 
-    std::string getMaterializeType() {
-        return options_value[OptionKeyword::MaterializeType] == "" ? "none" : options_value[OptionKeyword::MaterializeType];
+    std::string getResultMode() {
+        return options_value[OptionKeyword::ResultModeType] == "" ? "match" : options_value[OptionKeyword::ResultModeType];
+    }
+
+    std::string getSinkType() {
+        return options_value[OptionKeyword::ResultSinkType] == "" ? "threadlocal" : options_value[OptionKeyword::ResultSinkType];
     }
 };
 

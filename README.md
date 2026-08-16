@@ -44,7 +44,8 @@ Main options, with the full list in `matching/matchingcommand.h`:
 | `-threadnums` | comma-separated thread counts to sweep |
 | `-num` | embedding limit, or `MAX` |
 | `-time_limit` | seconds |
-| `-materialize` | result sink: `none` (default), `globallock`, `threadlocal` |
+| `-mode` | `count` counts embeddings, `match` (default) stores them |
+| `-sink` | how a stored embedding is delivered: `threadlocal` (default), `globallock` |
 
 Not every split x schedule pair is valid; `valid_combinations` in
 `test_anony/survey_bash/C_exp.py` is the authoritative list. Some behaviour is set at
@@ -54,14 +55,24 @@ full rebuild.
 Graph files are plain text: `t <vertex_count> <edge_count>`, then one
 `v <id> <label> <degree>` line per vertex, then one `e <src> <dst>` line per edge.
 
-### `-materialize`
+### `-mode` and `-sink`
 
-By default GSplit only counts embeddings, so the reported EPS excludes the cost of
-delivering results. `-materialize` adds a result sink to the same kernels so the two can
-be compared: `globallock` uses one mutex and one shared vector per embedding, as
-QSplit's `UnitArgs::addPartialMatch` does; `threadlocal` uses per-worker block buffers
-consolidated after enumeration. GSplit only. Statistics are written to the output file
-as a `Materialize mode: ...` line.
+`-mode` selects the problem being solved. `count` increments a counter and stores
+nothing, so its throughput excludes the cost of delivering results. `match` stores every
+embedding it finds. Both split modes honour both settings, so their throughput is
+comparable: same kernels, same splitting, same scheduling, differing only in how the
+query is split. `-mode count` is rejected under `-QorCandi Q`, because the join phase
+consumes the per-unit result tables and produces nothing without them.
+
+`-sink` selects how a stored embedding is delivered. `globallock` uses one mutex and one
+growing vector per query unit, which is what `UnitArgs::addPartialMatch` does;
+`threadlocal` uses per-worker block buffers, copied into the unit tables after every
+worker has been joined. That copy is timed separately and reported as
+`Consolidation time (seconds)`, so a comparison of the two sinks includes it. Sink
+statistics are written to the output file as a `Result mode: ...` line.
+
+`tools/compare.py` runs one binary over the split-mode x delivery matrix and writes a
+CSV, taking the binary path and a label so control and thesis results stay separate.
 
 ## Full sweep
 
