@@ -9,12 +9,16 @@ re-running the same label refuses to start rather than overwriting. Pass
 --baseline for a binary built from the baseline-upstream tag: it predates -mode
 and -sink, so it only gets the two split modes and no delivery flags.
 
-Runs are time-bounded, never -num bounded: -num is a per-task limit, so above
-one thread the output overshoots by up to the thread count. All configurations
-at a given thread count share one window, so the fixed warm-up is the same
-fraction of each. Windows shrink as threads rise to keep stored output inside
-the memory budget; throughput is a rate, so that costs sample size, not
-comparability.
+Give it a query that runs to completion in every configuration. QSplit is
+all-or-nothing -- when the join hits the time limit it reports 0 embeddings
+rather than a partial count -- so a QSplit row that does not finish is not a
+smaller measurement, it is no measurement. Rows that do finish all enumerate
+the same query, so their embedding counts match and their EPS figures are
+directly comparable. A row with overtime=1 finished nothing and is flagged.
+
+The time limit is only there to stop a runaway run. Do not bound output with
+-num instead: it is a per-task limit, so above one thread a run overshoots it
+by up to the thread count.
 
 Each run is a separate process, so peak RSS is per-run rather than a running
 maximum.
@@ -41,8 +45,11 @@ BASELINE_CONFIGS = [
     ("c_baseline", "C", "", ""),
 ]
 
-# Time limit per thread count, shared by every configuration at that count.
-WINDOWS = {1: 30, 2: 27, 4: 13, 8: 6}
+THREADS = [1, 2, 4, 8]
+
+# Safety net only. The slowest completing configuration is QSplit at one thread,
+# where the join dominates; raise this rather than lowering it.
+TIME_LIMIT = 300
 
 PATTERNS = {
     "embeddings": r"#Embeddings: (\d+)",
@@ -70,7 +77,7 @@ COLUMNS = [
     "mode",
     "sink",
     "threads",
-    "window_s",
+    "time_limit_s",
     "embeddings",
     "enumerate_s",
     "consolidation_s",
@@ -109,7 +116,6 @@ def source_version(binary):
 
 def run_one(args, config, threads, log_path):
     name, split, mode, sink = config
-    seconds = WINDOWS[threads]
     command = [
         "/usr/bin/time",
         "-v",
@@ -131,7 +137,7 @@ def run_one(args, config, threads, log_path):
         "-num",
         "MAX",
         "-time_limit",
-        str(seconds),
+        str(TIME_LIMIT),
         "-OutputFile",
         log_path,
     ]
@@ -150,7 +156,7 @@ def run_one(args, config, threads, log_path):
         "mode": mode,
         "sink": sink,
         "threads": threads,
-        "window_s": seconds,
+        "time_limit_s": TIME_LIMIT,
     }
     for field, pattern in PATTERNS.items():
         found = re.findall(pattern, text)
@@ -193,14 +199,11 @@ def main():
     writer.writeheader()
 
     count = 0
-    for threads in sorted(WINDOWS):
+    for threads in THREADS:
         for config in configs:
             name = config[0]
             log_path = os.path.join(run_dir, f"{name}-t{threads}.log")
-            print(
-                f"run: {name:14s} threads={threads} window={WINDOWS[threads]}s",
-                flush=True,
-            )
+            print(f"run: {name:14s} threads={threads}", flush=True)
             row = run_one(args, config, threads, log_path)
             row["source_version"] = version
             writer.writerow(row)
@@ -215,9 +218,12 @@ def main():
             if row["mode"] == "match" and not row["stored_embeddings"]:
                 sys.exit(f"{name} stored nothing -- rebuild {args.binary}")
             rss_gb = int(row["peak_rss_kb"] or 0) / 1e6
+            # A run that hits the limit did not finish the query, and under
+            # QSplit it reports 0 embeddings rather than a partial count.
+            warning = "  DID NOT FINISH (hit time limit)" if row["overtime"] == "1" else ""
             print(
-                f"     eps={row['eps']} peak_rss={rss_gb:.1f} GB "
-                f"overtime={row['overtime']}",
+                f"     eps={row['eps']} embeddings={row['embeddings']} "
+                f"peak_rss={rss_gb:.1f} GB{warning}",
                 flush=True,
             )
 
