@@ -187,7 +187,12 @@ def main():
     version = source_version(args.binary)
     configs = BASELINE_CONFIGS if args.baseline else CONFIGS
 
-    rows = []
+    # Written as the sweep goes, so a run that dies partway keeps what it has.
+    handle = open(csv_path, "w", newline="")
+    writer = csv.DictWriter(handle, fieldnames=COLUMNS)
+    writer.writeheader()
+
+    count = 0
     for threads in sorted(WINDOWS):
         for config in configs:
             name = config[0]
@@ -198,8 +203,14 @@ def main():
             )
             row = run_one(args, config, threads, log_path)
             row["source_version"] = version
-            rows.append(row)
+            writer.writerow(row)
+            handle.flush()
+            count += 1
 
+            if not row["embeddings"]:
+                # The run died before logging its statistics; the log file says why.
+                print(f"     FAILED -- see {log_path}", flush=True)
+                continue
             # A binary built before the rework accepts -mode and ignores it.
             if row["mode"] == "match" and not row["stored_embeddings"]:
                 sys.exit(f"{name} stored nothing -- rebuild {args.binary}")
@@ -210,11 +221,8 @@ def main():
                 flush=True,
             )
 
-    with open(csv_path, "w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
-    print(f"wrote {len(rows)} rows to {csv_path}")
+    handle.close()
+    print(f"wrote {count} rows to {csv_path}")
 
 
 if __name__ == "__main__":
