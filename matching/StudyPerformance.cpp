@@ -128,8 +128,8 @@ void split_Q_test(MatchingCommand& command) {
     std::string input_distribution_file_path = command.getDistributionFilePath();
     std::string input_output_file = command.getOutputFile();
     std::string input_nums_threads = command.getThreadNumbers();
-    // std::string input_type_split = command.getSplitType();
-    // std::string input_type_schedule = command.getScheduleType();
+    std::string input_type_split = command.getSplitType();
+    std::string input_type_schedule = command.getScheduleType();
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
 
@@ -772,7 +772,44 @@ for (auto& method_type : backMethods) {
     // Keep the previous round (thread count / back method) out of these statistics
     Materializer::reset();
 
-    // TODO: split_type and schedule_type
+    // Without these the pool keeps its defaults, ScheduleType::STATIC and
+    // SplitType::LINEAR, and TaskPool::splitTask aborts on that pair as soon as
+    // a second thread asks for work. Same parsing as split_C_test.
+    if (input_type_schedule == "static" || input_type_schedule == "staticworkload") {
+        taskPool->QUEUE_CAPACITY = std::numeric_limits<int64_t>::max();
+    }
+
+    if (input_type_schedule == "static") {
+        taskPool->schedule_type = ScheduleType::STATIC;
+    } else if (input_type_schedule == "staticworkload") {
+        taskPool->schedule_type = ScheduleType::STATICWORKLOAD;
+    } else if (input_type_schedule == "busy2idlenostop") {
+        taskPool->schedule_type = ScheduleType::BUSY2IDLENOSTOP;
+    } else if (input_type_schedule == "busy2idledepthstop") {
+        taskPool->schedule_type = ScheduleType::BUSY2IDLEDEPTHSTOP;
+    } else if (input_type_schedule == "timeout") {
+        taskPool->schedule_type = ScheduleType::TIMEOUT;
+    } else {
+        LOG() << "Error: The schedule type is not defined." << std::endl;
+        abort();
+    }
+
+    if (input_type_split == "linear") {
+        taskPool->split_type = SplitType::LINEAR;
+    } else if (input_type_split == "upperone") {
+        taskPool->split_type = SplitType::UPPERONE;
+    } else if (input_type_split == "workload") {
+        taskPool->split_type = SplitType::WORKLOAD;
+    } else if (input_type_split == "layer") {
+        taskPool->split_type = SplitType::LAYER;
+    } else {
+        LOG() << "Error: The split type is not defined." << std::endl;
+        abort();
+    }
+
+    LOG() << "schedule_type == " << input_type_schedule << std::endl;
+    LOG() << "split_type == " << input_type_split << std::endl;
+
     if (engine_type == "LFTJ") {
         EvaluateQuery::enum_method = [taskPool](TaskSlot& task, int task_id) { EvaluateQuery::LFTJ(taskPool, task, task_id); };
         EvaluateQuery::ParallelExecute(taskPool, multigraphs, unitArgsVec);
