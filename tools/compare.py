@@ -69,6 +69,7 @@ PATTERNS = {
 
 COLUMNS = [
     "label",
+    "repeat",
     "source_version",
     "data",
     "query",
@@ -182,6 +183,7 @@ def main():
     parser.add_argument("query")
     parser.add_argument("-o", "--out", default="results")
     parser.add_argument("--baseline", action="store_true")
+    parser.add_argument("--repeats", type=int, default=1, help="run the whole matrix this many times")
     args = parser.parse_args()
 
     run_dir = os.path.join(args.out, args.label)
@@ -199,33 +201,35 @@ def main():
     writer.writeheader()
 
     count = 0
-    for threads in THREADS:
-        for config in configs:
-            name = config[0]
-            log_path = os.path.join(run_dir, f"{name}-t{threads}.log")
-            print(f"run: {name:14s} threads={threads}", flush=True)
-            row = run_one(args, config, threads, log_path)
-            row["source_version"] = version
-            writer.writerow(row)
-            handle.flush()
-            count += 1
+    for repeat in range(1, args.repeats + 1):
+        for threads in THREADS:
+            for config in configs:
+                name = config[0]
+                log_path = os.path.join(run_dir, f"{name}-t{threads}-r{repeat}.log")
+                print(f"run: {name:14s} threads={threads}", flush=True)
+                row = run_one(args, config, threads, log_path)
+                row["repeat"] = repeat
+                row["source_version"] = version
+                writer.writerow(row)
+                handle.flush()
+                count += 1
 
-            if not row["embeddings"]:
-                # The run died before logging its statistics; the log file says why.
-                print(f"     FAILED -- see {log_path}", flush=True)
-                continue
-            # A binary built before the rework accepts -mode and ignores it.
-            if row["mode"] == "match" and not row["stored_embeddings"]:
-                sys.exit(f"{name} stored nothing -- rebuild {args.binary}")
-            rss_gb = int(row["peak_rss_kb"] or 0) / 1e6
-            # A run that hits the limit did not finish the query, and under
-            # QSplit it reports 0 embeddings rather than a partial count.
-            warning = "  DID NOT FINISH (hit time limit)" if row["overtime"] == "1" else ""
-            print(
-                f"     eps={row['eps']} embeddings={row['embeddings']} "
-                f"peak_rss={rss_gb:.1f} GB{warning}",
-                flush=True,
-            )
+                if not row["embeddings"]:
+                    # The run died before logging its statistics; the log file says why.
+                    print(f"     FAILED -- see {log_path}", flush=True)
+                    continue
+                # A binary built before the rework accepts -mode and ignores it.
+                if row["mode"] == "match" and not row["stored_embeddings"]:
+                    sys.exit(f"{name} stored nothing -- rebuild {args.binary}")
+                rss_gb = int(row["peak_rss_kb"] or 0) / 1e6
+                # A run that hits the limit did not finish the query, and under
+                # QSplit it reports 0 embeddings rather than a partial count.
+                warning = "  DID NOT FINISH (hit time limit)" if row["overtime"] == "1" else ""
+                print(
+                    f"     eps={row['eps']} embeddings={row['embeddings']} "
+                    f"peak_rss={rss_gb:.1f} GB{warning}",
+                    flush=True,
+                )
 
     handle.close()
     print(f"wrote {count} rows to {csv_path}")

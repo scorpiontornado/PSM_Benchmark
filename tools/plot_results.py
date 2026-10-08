@@ -9,6 +9,7 @@ and q_threadlocal at thread counts 1, 2, 4 and 8.
 
 import csv
 import sys
+from statistics import median
 
 import matplotlib
 
@@ -26,14 +27,18 @@ THREADS = [1, 2, 4, 8]
 
 
 def load(path):
-    """Return {config: {threads: row}} with the numeric fields already parsed."""
-    table = {}
+    """Return {config: {threads: row}}, with each field the median over repeats."""
+    runs = {}
     with open(path) as f:
         for row in csv.DictReader(f):
-            row["eps"] = float(row["eps"]) / 1e6
-            row["enumerate_s"] = float(row["enumerate_s"])
-            row["consolidation_s"] = float(row["consolidation_s"])
-            table.setdefault(row["config"], {})[int(row["threads"])] = row
+            runs.setdefault((row["config"], int(row["threads"])), []).append(row)
+    table = {}
+    for (config, threads), rows in runs.items():
+        table.setdefault(config, {})[threads] = {
+            "eps": median(float(r["eps"]) for r in rows) / 1e6,
+            "enumerate_s": median(float(r["enumerate_s"]) for r in rows),
+            "consolidation_s": median(float(r["consolidation_s"]) for r in rows),
+        }
     return table
 
 
