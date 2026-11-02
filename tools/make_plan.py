@@ -252,7 +252,7 @@ def add_processes(
 
 
 match experiment:
-    # 12 separate processes per cell, so the noise includes variation between processes,
+    # 10 separate processes per cell, so the noise includes variation between processes,
     # not just between runs in one process.
     case "noise":
         queries = screened_queries("HPRD", "15", 1, bins=["2"])
@@ -261,7 +261,7 @@ match experiment:
             queries,
             cells(PILOT_COMBOS, [1, 16, 32]),
             BOTH_COLUMNS,
-            copies=12,
+            copies=10,
         )
 
     # Alone on socket 0, alone on socket 1, then paired.
@@ -279,7 +279,7 @@ match experiment:
                         queries,
                         cells(PILOT_COMBOS, [threads]),
                         BOTH_COLUMNS,
-                        copies=6,
+                        copies=5,
                         cpus=cpus,
                     )
 
@@ -329,13 +329,13 @@ match experiment:
         data = "datasets/HPRD/L15/HPRD-15.txt"
         queries = [f"datasets/HPRD/L15/Q10/Q10-{i}.txt" for i in range(1, 11)]
         runs = with_one_thread(YU_COMBOS, [4, 16, 32])
-        add_processes(data, queries, runs, ["yu-setup"], copies=6)
-        add_processes(data, queries, runs, ["repaired"], copies=6, binary=REPAIRED)
+        add_processes(data, queries, runs, ["yu-setup"], copies=5)
+        add_processes(data, queries, runs, ["repaired"], copies=5, binary=REPAIRED)
 
         # The released artifact aborts on QSplit above 1 thread.
         upstream_runs = [(n, f, t) for n, f, t in runs if t == 1 or "-QorCandi C" in f]
         add_processes(
-            data, queries, upstream_runs, ["upstream"], copies=6, binary=UPSTREAM
+            data, queries, upstream_runs, ["upstream"], copies=5, binary=UPSTREAM
         )
 
     case "delivery":
@@ -347,7 +347,7 @@ match experiment:
                 # QSplit cannot count.
                 if sink == "count":
                     runs = [(n, f, t) for n, f, t in runs if "-QorCandi C" in f]
-                add_processes(graph_path(name, labels), queries, runs, [sink], copies=6)
+                add_processes(graph_path(name, labels), queries, runs, [sink], copies=5)
 
     case "sweep-hprd":
         add_processes(
@@ -388,7 +388,7 @@ match experiment:
                 screened_queries(name, labels, 3),
                 with_one_thread(combos),
                 ["delivered"],
-                copies=6,
+                copies=5,
             )
 
     # The slowest screened query in each bin, under three CPU sets: one socket,
@@ -413,7 +413,7 @@ match experiment:
                 queries,
                 runs,
                 ["delivered"],
-                copies=6,
+                copies=5,
                 cpus=cpus,
             )
 
@@ -456,18 +456,21 @@ match experiment:
 
     # 30 s against 300 s time limits, to measure how much the 30 s limit biases results.
     # The delivered runs are the cBNS and cOBNS pair the large experiment compares.
+    # At 1 label most runs hit the window, so each runs once to keep the 300 s runs cheap.
     case "window":
         graph_runs = cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
         pair_runs = cells(pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16])
-        data = graph_path("dblp", "15")
-        queries = first_queries("dblp", "15")
-        for limit in [30, 300]:
-            add_processes(
-                data, queries, graph_runs, ["yu-setup"], copies=3, time_limit=limit
-            )
-            add_processes(
-                data, queries, pair_runs, ["delivered"], copies=3, time_limit=limit
-            )
+        for labels, copies in [("15", 3), ("1", 1)]:
+            data = graph_path("dblp", labels)
+            queries = first_queries("dblp", labels)
+
+            for limit in [30, 300]:
+                add_processes(
+                    data, queries, graph_runs, ["yu-setup"], copies, time_limit=limit
+                )
+                add_processes(
+                    data, queries, pair_runs, ["delivered"], copies, time_limit=limit
+                )
 
     # Repeats run inside one process, because reloading a large graph for every run
     # costs too much.
