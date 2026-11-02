@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Draw the three presentation charts from a compare.py results CSV.
 
 Usage: python3 tools/plot_results.py <compare.csv> <outdir>
@@ -23,6 +24,10 @@ INK = "#0b0b0b"
 MUTED = "#52514e"
 GRID = "#dedddb"
 
+TITLE = {"color": INK, "fontsize": 14, "fontweight": "bold", "loc": "left", "pad": 14}
+AXIS_LABEL = {"color": MUTED, "fontsize": 11}
+VALUE_LABEL = {"ha": "center", "color": INK, "fontsize": 11, "fontweight": "bold"}
+
 THREADS = [1, 2, 4, 8]
 
 
@@ -32,6 +37,7 @@ def load(path):
     with open(path) as f:
         for row in csv.DictReader(f):
             runs.setdefault((row["config"], int(row["threads"])), []).append(row)
+
     table = {}
     for (config, threads), rows in runs.items():
         table.setdefault(config, {})[threads] = {
@@ -55,8 +61,8 @@ def style(ax):
 
 def save(fig, outdir, name):
     for ext in ("png", "svg"):
-        fig.savefig(f"{outdir}/{name}.{ext}", dpi=200, bbox_inches="tight",
-                    facecolor="white")
+        path = f"{outdir}/{name}.{ext}"
+        fig.savefig(path, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"wrote {outdir}/{name}.png and .svg")
 
@@ -69,23 +75,40 @@ def eps_vs_threads(table, outdir):
     ]
     fig, ax = plt.subplots(figsize=(9, 5))
     style(ax)
+
     for config, label, colour in series:
         y = [table[config][t]["eps"] for t in THREADS]
-        ax.plot(THREADS, y, color=colour, linewidth=2.5, marker="o",
-                markersize=8, markeredgecolor="white", markeredgewidth=1.5,
-                label=label, zorder=3)
-        ax.annotate(f"{y[-1]:.1f}", (THREADS[-1], y[-1]), textcoords="offset points",
-                    xytext=(10, 0), va="center", color=INK, fontsize=11,
-                    fontweight="bold")
+        ax.plot(
+            THREADS,
+            y,
+            color=colour,
+            linewidth=2.5,
+            marker="o",
+            markersize=8,
+            markeredgecolor="white",
+            markeredgewidth=1.5,
+            label=label,
+            zorder=3,
+        )
+        ax.annotate(
+            f"{y[-1]:.1f}",
+            (THREADS[-1], y[-1]),
+            textcoords="offset points",
+            xytext=(10, 0),
+            va="center",
+            color=INK,
+            fontsize=11,
+            fontweight="bold",
+        )
+
     ax.set_xscale("log", base=2)
     ax.set_xticks(THREADS)
     ax.set_xticklabels([str(t) for t in THREADS])
     ax.set_xlim(0.9, 10.5)
     ax.set_ylim(0, 140)
-    ax.set_xlabel("Threads", color=MUTED, fontsize=11)
-    ax.set_ylabel("Million embeddings per second", color=MUTED, fontsize=11)
-    ax.set_title("Counting scales. Delivering results does not.",
-                 color=INK, fontsize=14, fontweight="bold", loc="left", pad=14)
+    ax.set_xlabel("Threads", **AXIS_LABEL)
+    ax.set_ylabel("Million embeddings per second", **AXIS_LABEL)
+    ax.set_title("Counting scales. Delivering results does not.", **TITLE)
     ax.legend(frameon=False, loc="upper left", fontsize=11, labelcolor=INK)
     save(fig, outdir, "eps_vs_threads")
 
@@ -98,18 +121,28 @@ def consolidation(table, outdir):
     fig, ax = plt.subplots(figsize=(9, 5))
     style(ax)
     ax.bar(x, enum, width=0.55, color=BLUE, label="Enumerate (parallel)", zorder=3)
-    ax.bar(x, cons, width=0.55, bottom=[e + 0.04 for e in enum], color=ORANGE,
-           label="Consolidate (serial)", zorder=3)
+    # The 0.04 gap separates the two stacked segments.
+    bottom = [e + 0.04 for e in enum]
+    ax.bar(
+        x,
+        cons,
+        width=0.55,
+        bottom=bottom,
+        color=ORANGE,
+        label="Consolidate (serial)",
+        zorder=3,
+    )
     for i, (e, c) in enumerate(zip(enum, cons)):
-        ax.annotate(f"{c / (e + c):.0%} serial", (i, e + c + 0.25), ha="center",
-                    color=INK, fontsize=11, fontweight="bold")
+        ax.annotate(f"{c / (e + c):.0%} serial", (i, e + c + 0.25), **VALUE_LABEL)
+
     ax.set_xticks(x)
     ax.set_xticklabels([str(t) for t in THREADS])
     ax.set_ylim(0, 14)
-    ax.set_xlabel("Threads", color=MUTED, fontsize=11)
-    ax.set_ylabel("Seconds", color=MUTED, fontsize=11)
-    ax.set_title("Thread-local buffering defers the cost, it does not remove it",
-                 color=INK, fontsize=14, fontweight="bold", loc="left", pad=14)
+    ax.set_xlabel("Threads", **AXIS_LABEL)
+    ax.set_ylabel("Seconds", **AXIS_LABEL)
+    ax.set_title(
+        "Thread-local buffering defers the cost, it does not remove it", **TITLE
+    )
     ax.legend(frameon=False, loc="upper right", fontsize=11, labelcolor=INK)
     save(fig, outdir, "consolidation")
 
@@ -122,24 +155,22 @@ def gsplit_vs_qsplit(table, outdir):
 
     fig, ax = plt.subplots(figsize=(9, 5))
     style(ax)
-    ax.bar([i - w / 2 - 0.01 for i in x], g, width=w, color=BLUE, label="GSplit",
-           zorder=3)
-    ax.bar([i + w / 2 + 0.01 for i in x], q, width=w, color=AQUA, label="QSplit",
-           zorder=3)
+    g_x = [i - w / 2 - 0.01 for i in x]
+    q_x = [i + w / 2 + 0.01 for i in x]
+    ax.bar(g_x, g, width=w, color=BLUE, label="GSplit", zorder=3)
+    ax.bar(q_x, q, width=w, color=AQUA, label="QSplit", zorder=3)
     for i, (a, b) in enumerate(zip(g, q)):
-        ax.annotate(f"{a:.1f}", (i - w / 2, a + 0.8), ha="center", color=INK,
-                    fontsize=11, fontweight="bold")
-        ax.annotate(f"{b:.1f}", (i + w / 2, b + 0.8), ha="center", color=INK,
-                    fontsize=11, fontweight="bold")
-        ax.annotate(f"{a / b:.1f}x", (i, max(a, b) + 4), ha="center", color=MUTED,
-                    fontsize=11)
+        ax.annotate(f"{a:.1f}", (i - w / 2, a + 0.8), **VALUE_LABEL)
+        ax.annotate(f"{b:.1f}", (i + w / 2, b + 0.8), **VALUE_LABEL)
+        ratio = f"{a / b:.1f}x"
+        ax.annotate(ratio, (i, max(a, b) + 4), ha="center", color=MUTED, fontsize=11)
+
     ax.set_xticks(x)
     ax.set_xticklabels([str(t) for t in THREADS])
     ax.set_ylim(0, 45)
-    ax.set_xlabel("Threads", color=MUTED, fontsize=11)
-    ax.set_ylabel("Million embeddings per second", color=MUTED, fontsize=11)
-    ax.set_title("Same query, same sink, same 139M embeddings delivered",
-                 color=INK, fontsize=14, fontweight="bold", loc="left", pad=14)
+    ax.set_xlabel("Threads", **AXIS_LABEL)
+    ax.set_ylabel("Million embeddings per second", **AXIS_LABEL)
+    ax.set_title("Same query, same sink, same 139M embeddings delivered", **TITLE)
     ax.legend(frameon=False, loc="upper left", fontsize=11, labelcolor=INK)
     save(fig, outdir, "gsplit_vs_qsplit")
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reduce the label alphabet of a data graph and its query graphs.
 
-    python3 tools/relabel.py <num_labels> <out_dir> <graph.txt> [query.txt ...]
+Usage: python3 tools/relabel.py <num_labels> <out_dir> <graph.txt> [query.txt ...]
 
 Every label becomes `label % num_labels`, so labels are merged rather than
 reassigned. Two things follow from that:

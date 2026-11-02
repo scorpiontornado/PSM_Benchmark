@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run one binary over the split-mode x delivery matrix and write a CSV.
 
-    python3 tools/compare.py <binary> <label> <graph.txt> <query.txt> -o <outdir>
+Usage: python3 tools/compare.py <binary> <label> <graph.txt> <query.txt> -o <outdir>
 
 Everything for one run lands in <outdir>/<label>/: one CSV and one driver log
 per configuration. The label keeps a control run and a thesis run apart, and
@@ -20,8 +20,7 @@ The time limit is only there to stop a runaway run. Do not bound output with
 -num instead: it is a per-task limit, so above one thread a run overshoots it
 by up to the thread count.
 
-Each run is a separate process, so peak RSS is per-run rather than a running
-maximum.
+Each run is a separate process, so peak RSS is per run, not a running maximum.
 """
 
 import argparse
@@ -183,7 +182,9 @@ def main():
     parser.add_argument("query")
     parser.add_argument("-o", "--out", default="results")
     parser.add_argument("--baseline", action="store_true")
-    parser.add_argument("--repeats", type=int, default=1, help="run the whole matrix this many times")
+    parser.add_argument(
+        "--repeats", type=int, default=1, help="run the whole matrix this many times"
+    )
     args = parser.parse_args()
 
     run_dir = os.path.join(args.out, args.label)
@@ -196,42 +197,45 @@ def main():
     configs = BASELINE_CONFIGS if args.baseline else CONFIGS
 
     # Written as the sweep goes, so a run that dies partway keeps what it has.
-    handle = open(csv_path, "w", newline="")
-    writer = csv.DictWriter(handle, fieldnames=COLUMNS)
-    writer.writeheader()
+    with open(csv_path, "w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=COLUMNS)
+        writer.writeheader()
 
-    count = 0
-    for repeat in range(1, args.repeats + 1):
-        for threads in THREADS:
-            for config in configs:
-                name = config[0]
-                log_path = os.path.join(run_dir, f"{name}-t{threads}-r{repeat}.log")
-                print(f"run: {name:14s} threads={threads}", flush=True)
-                row = run_one(args, config, threads, log_path)
-                row["repeat"] = repeat
-                row["source_version"] = version
-                writer.writerow(row)
-                handle.flush()
-                count += 1
+        count = 0
+        for repeat in range(1, args.repeats + 1):
+            for threads in THREADS:
+                for config in configs:
+                    name = config[0]
+                    log_path = os.path.join(run_dir, f"{name}-t{threads}-r{repeat}.log")
+                    print(f"run: {name:14s} threads={threads}", flush=True)
+                    row = run_one(args, config, threads, log_path)
+                    row["repeat"] = repeat
+                    row["source_version"] = version
+                    writer.writerow(row)
+                    handle.flush()
+                    count += 1
 
-                if not row["embeddings"]:
-                    # The run died before logging its statistics; the log file says why.
-                    print(f"     FAILED -- see {log_path}", flush=True)
-                    continue
-                # A binary built before the rework accepts -mode and ignores it.
-                if row["mode"] == "match" and not row["stored_embeddings"]:
-                    sys.exit(f"{name} stored nothing -- rebuild {args.binary}")
-                rss_gb = int(row["peak_rss_kb"] or 0) / 1e6
-                # A run that hits the limit did not finish the query, and under
-                # QSplit it reports 0 embeddings rather than a partial count.
-                warning = "  DID NOT FINISH (hit time limit)" if row["overtime"] == "1" else ""
-                print(
-                    f"     eps={row['eps']} embeddings={row['embeddings']} "
-                    f"peak_rss={rss_gb:.1f} GB{warning}",
-                    flush=True,
-                )
+                    if not row["embeddings"]:
+                        # The run died before logging its statistics; the log file says why.
+                        print(f"     FAILED -- see {log_path}", flush=True)
+                        continue
+                    # A binary built before the rework accepts -mode and ignores it.
+                    if row["mode"] == "match" and not row["stored_embeddings"]:
+                        sys.exit(f"{name} stored nothing -- rebuild {args.binary}")
+                    rss_gb = int(row["peak_rss_kb"] or 0) / 1e6
+                    # A run that hits the limit did not finish the query, and under
+                    # QSplit it reports 0 embeddings rather than a partial count.
+                    warning = (
+                        "  DID NOT FINISH (hit time limit)"
+                        if row["overtime"] == "1"
+                        else ""
+                    )
+                    print(
+                        f"     eps={row['eps']} embeddings={row['embeddings']} "
+                        f"peak_rss={rss_gb:.1f} GB{warning}",
+                        flush=True,
+                    )
 
-    handle.close()
     print(f"wrote {count} rows to {csv_path}")
 
 
