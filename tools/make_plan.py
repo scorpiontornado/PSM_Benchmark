@@ -182,7 +182,7 @@ def pick(combos, names):
     return {n: combos[n] for n in names if n in combos}
 
 
-def cells(combos, threads):
+def make_cells(combos, threads):
     """Every combination at every thread count, as (name, flags, threads)."""
     return [(n, f, t) for n, f in combos.items() for t in threads]
 
@@ -203,27 +203,28 @@ def with_one_thread(combos, threads=THREADS):
                 "-QorCandi C -split linear -schedule busy2idlenostop "
                 f"-BackMethods {KERNELS[kernel]}"
             )
-    return cells(combos, threads) + cells(one_thread, [1])
+    return make_cells(combos, threads) + make_cells(one_thread, [1])
 
 
 def add_processes(
     data,
     queries,
-    runs,
+    cells,
     deliveries,
-    copies,
+    processes,
     binary=THESIS,
     time_limit=30,
     cpus="",
-    repeats=1,
+    runs=1,
 ):
     """Add one plan row per process to rows.
 
-    Each query, run and delivery column gets `copies` identical processes,
-    and each process repeats its run `repeats` times.
+    Each query, cell and delivery column gets `processes` identical processes,
+    and each process runs `runs` times with one graph load.
+    Kalibera and Jones (ISMM '13) call these two levels executions and iterations.
     """
     for query in queries:
-        for name, flags, threads in runs:
+        for name, flags, threads in cells:
             for delivery in deliveries:
                 # TODO: deliver eCIR once the Circinus expansion is validated.
                 if delivery == "delivered" and name.endswith("-eCIR"):
@@ -234,7 +235,7 @@ def add_processes(
                 if delivery == "yu-setup" and "-QorCandi Q" in flags:
                     delivery_flags = DELIVERY_FLAGS["globallock"]
 
-                for _ in range(copies):
+                for _ in range(processes):
                     rows.append(
                         {
                             "experiment": experiment,
@@ -243,7 +244,7 @@ def add_processes(
                             "data": data,
                             "query": query,
                             "threads": threads,
-                            "repeats": repeats,
+                            "runs": runs,
                             "cpus": cpus,
                             "binary": binary,
                             "flags": f"{flags} {delivery_flags} -time_limit {time_limit}",
@@ -259,9 +260,9 @@ match experiment:
         add_processes(
             graph_path("HPRD", "15"),
             queries,
-            cells(PILOT_COMBOS, [1, 16, 32]),
+            make_cells(PILOT_COMBOS, [1, 16, 32]),
             BOTH_COLUMNS,
-            copies=10,
+            processes=10,
         )
 
     # Alone on socket 0, alone on socket 1, then paired.
@@ -277,9 +278,9 @@ match experiment:
                     add_processes(
                         graph_path(name, labels),
                         queries,
-                        cells(PILOT_COMBOS, [threads]),
+                        make_cells(PILOT_COMBOS, [threads]),
                         BOTH_COLUMNS,
-                        copies=5,
+                        processes=5,
                         cpus=cpus,
                     )
 
@@ -289,9 +290,9 @@ match experiment:
             add_processes(
                 graph_path(name, labels),
                 first_queries(name, labels, bins=["2"]),
-                cells(pick(YU_COMBOS, ["pEC-cBNS-eLFTJ"]), [16]),
+                make_cells(pick(YU_COMBOS, ["pEC-cBNS-eLFTJ"]), [16]),
                 BOTH_COLUMNS,
-                copies=1,
+                processes=1,
             )
 
     # 6 processes of 3 runs against 18 processes of 1, to measure what running the large
@@ -303,13 +304,17 @@ match experiment:
             add_processes(
                 data,
                 queries,
-                cells(PILOT_COMBOS, [16]),
+                make_cells(PILOT_COMBOS, [16]),
                 ["delivered"],
-                copies=6,
-                repeats=3,
+                processes=6,
+                runs=3,
             )
             add_processes(
-                data, queries, cells(PILOT_COMBOS, [16]), ["delivered"], copies=18
+                data,
+                queries,
+                make_cells(PILOT_COMBOS, [16]),
+                ["delivered"],
+                processes=18,
             )
 
     # Every combination once at 1 and 64 threads, to catch crashes before a long batch.
@@ -319,7 +324,7 @@ match experiment:
             screened_queries("HPRD", "15", 1, bins=["2"]),
             with_one_thread(ALL_COMBOS, [64]),
             BOTH_COLUMNS,
-            copies=1,
+            processes=1,
         )
 
     # The thesis build in Yu et al.'s setup against the repaired control, and the
@@ -328,14 +333,16 @@ match experiment:
     case "validation":
         data = "datasets/HPRD/L15/HPRD-15.txt"
         queries = [f"datasets/HPRD/L15/Q10/Q10-{i}.txt" for i in range(1, 11)]
-        runs = with_one_thread(YU_COMBOS, [4, 16, 32])
-        add_processes(data, queries, runs, ["yu-setup"], copies=5)
-        add_processes(data, queries, runs, ["repaired"], copies=5, binary=REPAIRED)
+        cells = with_one_thread(YU_COMBOS, [4, 16, 32])
+        add_processes(data, queries, cells, ["yu-setup"], processes=5)
+        add_processes(data, queries, cells, ["repaired"], processes=5, binary=REPAIRED)
 
         # The released artifact aborts on QSplit above 1 thread.
-        upstream_runs = [(n, f, t) for n, f, t in runs if t == 1 or "-QorCandi C" in f]
+        upstream_cells = [
+            (n, f, t) for n, f, t in cells if t == 1 or "-QorCandi C" in f
+        ]
         add_processes(
-            data, queries, upstream_runs, ["upstream"], copies=5, binary=UPSTREAM
+            data, queries, upstream_cells, ["upstream"], processes=5, binary=UPSTREAM
         )
 
     case "delivery":
@@ -343,11 +350,13 @@ match experiment:
         for name, labels in DELIVERY_GRAPHS:
             queries = screened_queries(name, labels, 1)
             for sink in ["count", "globallock", "threadlocal"]:
-                runs = with_one_thread(combos)
+                cells = with_one_thread(combos)
                 # QSplit cannot count.
                 if sink == "count":
-                    runs = [(n, f, t) for n, f, t in runs if "-QorCandi C" in f]
-                add_processes(graph_path(name, labels), queries, runs, [sink], copies=5)
+                    cells = [(n, f, t) for n, f, t in cells if "-QorCandi C" in f]
+                add_processes(
+                    graph_path(name, labels), queries, cells, [sink], processes=5
+                )
 
     case "sweep-hprd":
         add_processes(
@@ -355,7 +364,7 @@ match experiment:
             screened_queries("HPRD", "15", 2),
             with_one_thread(YU_COMBOS),
             BOTH_COLUMNS,
-            copies=3,
+            processes=3,
         )
 
     case "sweep-dblp":
@@ -364,7 +373,7 @@ match experiment:
             screened_queries("dblp", "15", 2),
             with_one_thread(YU_COMBOS),
             ["delivered"],
-            copies=3,
+            processes=3,
         )
 
     case "sweep-onetbb":
@@ -372,9 +381,9 @@ match experiment:
             add_processes(
                 graph_path(name, "15"),
                 screened_queries(name, "15", 2),
-                cells(ONETBB_COMBOS, THREADS),
+                make_cells(ONETBB_COMBOS, THREADS),
                 ["delivered"],
-                copies=3,
+                processes=3,
             )
 
     case "runtime":
@@ -388,7 +397,7 @@ match experiment:
                 screened_queries(name, labels, 3),
                 with_one_thread(combos),
                 ["delivered"],
-                copies=5,
+                processes=5,
             )
 
     # The slowest screened query in each bin, under three CPU sets: one socket,
@@ -406,70 +415,82 @@ match experiment:
             slowest = max(seconds, key=seconds.get)
             queries.append(f"{pool}/{slowest}")
 
-        runs = cells(pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16])
+        cells = make_cells(pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16])
         for cpus in ["0-15", "0-7,16-23", "0-7,32-39"]:
             add_processes(
                 graph_path("dblp", "15"),
                 queries,
-                runs,
+                cells,
                 ["delivered"],
-                copies=5,
+                processes=5,
                 cpus=cpus,
             )
 
     case "graphs":
-        runs = cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
+        cells = make_cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
         # HPRD at 15 labels comes from the sweep.
         for name, labels in MAIN[1:]:
             add_processes(
                 graph_path(name, labels),
                 screened_queries(name, labels, 2),
-                runs,
+                cells,
                 BOTH_COLUMNS,
-                copies=3,
+                processes=3,
             )
 
     case "labels":
-        runs = cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
+        cells = make_cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
         for name in ["HPRD", "dblp"]:
             for labels in ["1", "5", "15", "30", "45", "60"]:
                 add_processes(
                     graph_path(name, labels),
                     first_queries(name, labels),
-                    runs,
+                    cells,
                     BOTH_COLUMNS,
-                    copies=3,
+                    processes=3,
                 )
 
     # Size 10 at 15 labels comes from the label experiment.
     case "sizes":
-        runs = cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
+        cells = make_cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
         for name in ["HPRD", "dblp"]:
             for size in [20, 30]:
                 add_processes(
                     graph_path(name, "15"),
                     first_queries(name, "15", size),
-                    runs,
+                    cells,
                     BOTH_COLUMNS,
-                    copies=3,
+                    processes=3,
                 )
 
     # 30 s against 300 s time limits, to measure how much the 30 s limit biases results.
     # The delivered runs are the cBNS and cOBNS pair the large experiment compares.
-    # At 1 label most runs hit the window, so each runs once to keep the 300 s runs cheap.
+    # At 1 label most runs hit the window, so each cell runs once.
     case "window":
-        graph_runs = cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
-        pair_runs = cells(pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16])
-        for labels, copies in [("15", 3), ("1", 1)]:
+        graph_cells = make_cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
+        pair_cells = make_cells(
+            pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16]
+        )
+        for labels, processes in [("15", 3), ("1", 1)]:
             data = graph_path("dblp", labels)
             queries = first_queries("dblp", labels)
 
             for limit in [30, 300]:
                 add_processes(
-                    data, queries, graph_runs, ["yu-setup"], copies, time_limit=limit
+                    data,
+                    queries,
+                    graph_cells,
+                    ["yu-setup"],
+                    processes,
+                    time_limit=limit,
                 )
                 add_processes(
-                    data, queries, pair_runs, ["delivered"], copies, time_limit=limit
+                    data,
+                    queries,
+                    pair_cells,
+                    ["delivered"],
+                    processes,
+                    time_limit=limit,
                 )
 
     # Repeats run inside one process, because reloading a large graph for every run
@@ -479,7 +500,7 @@ match experiment:
         runtime = pick(
             ALL_COMBOS, [f"pEC-{c}-{e}" for c in schedules for e in ["eLFTJ", "eCFL"]]
         )
-        graph_runs = cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
+        graph_cells = make_cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
         for name, labels in LARGE:
             data = graph_path(name, labels)
             queries = first_queries(name, labels)
@@ -488,10 +509,10 @@ match experiment:
                 queries,
                 with_one_thread(runtime),
                 ["delivered"],
-                copies=1,
-                repeats=3,
+                processes=1,
+                runs=3,
             )
-            add_processes(data, queries, graph_runs, BOTH_COLUMNS, copies=1, repeats=3)
+            add_processes(data, queries, graph_cells, BOTH_COLUMNS, processes=1, runs=3)
 
     case _:
         sys.exit(f"unknown experiment {experiment}")
@@ -509,5 +530,5 @@ with open(out_path, "w", newline="") as f:
     writer.writeheader()
     writer.writerows(rows)
 
-runs = sum(int(r["repeats"]) for r in rows)
-print(f"{out_path}: {len(rows)} processes, {runs} runs")
+total_runs = sum(int(r["runs"]) for r in rows)
+print(f"{out_path}: {len(rows)} processes, {total_runs} runs")

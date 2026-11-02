@@ -3,7 +3,10 @@
 
 Usage: python3 tools/run_plan.py <plan.csv> <results_dir> [--pair]
 
-Processes run under taskset in passes, one copy of each process per pass, shuffled.
+Processes run under taskset in passes, shuffled, so identical processes (the plan's
+repeats) are spread over the batch. Each process runs its plan row's `runs` times
+with one graph load. Kalibera and Jones (ISMM '13) call these two levels executions
+and iterations.
 Each process writes its driver log and rows to <results_dir>/runs/,
 and <results_dir>/results.csv collects the rows of the plan's processes at the end.
 Rerunning skips processes that already have their rows, so a killed batch resumes.
@@ -118,15 +121,16 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-# A process's id is a hash of its plan row plus a copy number, so regenerating the plan
+# A process's id is a hash of its plan row plus a number among identical rows, so
+# regenerating the plan
 # keeps resume correct.
 with open(args.plan) as f:
     plan = list(csv.DictReader(f))
-copies = {}
+processes = {}
 for row in plan:
     key = hashlib.sha1("|".join(row.values()).encode()).hexdigest()[:12]
-    copies[key] = copies.get(key, 0) + 1
-    row["id"] = f"{key}-{copies[key]}"
+    processes[key] = processes.get(key, 0) + 1
+    row["id"] = f"{key}-{processes[key]}"
 
 binary_hash = {}
 for b in {r["binary"] for r in plan}:
@@ -141,7 +145,7 @@ def run_path(row, extension):
     """Where a process's log or rows go, named so `ls runs/` shows what each one is.
 
     The id at the end keeps the name unique when two processes differ only in a column
-    the name leaves out, or are copies of one process.
+    the name leaves out, or are identical processes.
     """
     graph = os.path.basename(row["data"]).removesuffix(".txt")
     query_dir, query_file = os.path.split(row["query"])
@@ -161,7 +165,7 @@ if args.overwrite:
         if os.path.exists(run_path(row, "csv")):
             os.remove(run_path(row, "csv"))
 
-# A process runs again from the start unless every repeat recorded an embedding count,
+# A process runs again from the start unless every run recorded an embedding count,
 # so a driver that crashed or was killed partway reruns on the next resume.
 todo = []
 for row in plan:
@@ -171,7 +175,7 @@ for row in plan:
             for r in csv.DictReader(f):
                 if r["embeddings"]:
                     finished += 1
-    if finished < int(row["repeats"]):
+    if finished < int(row["runs"]):
         todo.append(row)
 
 # With --pair, a process shares the machine with one other only if it has no CPU set of
@@ -181,13 +185,13 @@ for row in todo:
     if not args.pair or row["cpus"] or int(row["threads"]) > SOCKET_CORES:
         alone_ids.add(row["id"])
 
-# Copy k of a process with n copies runs in pass ceil(k * max_copies / n),
+# Process k of n identical processes runs in pass ceil(k * max_processes / n),
 # so a batch stopped after any pass has about the same share of every cell's repeats.
-max_copies = max(copies.values())
+max_processes = max(processes.values())
 passes = {}
 for row in todo:
-    key, copy = row["id"].rsplit("-", 1)
-    pass_number = math.ceil(int(copy) * max_copies / copies[key])
+    key, number = row["id"].rsplit("-", 1)
+    pass_number = math.ceil(int(number) * max_processes / processes[key])
     passes.setdefault(pass_number, []).append(row)
 
 # Each pass is shuffled. With --pair, its pairable processes go first,
@@ -206,7 +210,7 @@ print(
 
 columns = [
     *plan[0],
-    *["binary_sha1", "repeat", "cpus_used", "slot", "t_start", "t_end"],
+    *["binary_sha1", "run", "cpus_used", "slot", "t_start", "t_end"],
     *["load_start", "load_end", "mhz_run"],
     *FIELDS,
     *THREAD_FIELDS,
@@ -232,7 +236,7 @@ def start(row, socket, slot):
     if os.path.exists(log):
         os.remove(log)
 
-    thread_counts = ",".join([row["threads"]] * int(row["repeats"]))
+    thread_counts = ",".join([row["threads"]] * int(row["runs"]))
     command = ["taskset", "-c", cpus, "/usr/bin/time", "-v", row["binary"]]
     command += ["-d", row["data"], "-q", row["query"], *row["flags"].split()]
     command += ["-threadnums", thread_counts, "-num", "MAX", "-OutputFile", log]
@@ -263,7 +267,7 @@ def finish(socket):
 
     runs = parse(log_text, time_text)
     row = job["row"]
-    failed = job["process"].returncode != 0 or len(runs) < int(row["repeats"])
+    failed = job["process"].returncode != 0 or len(runs) < int(row["runs"])
     for run in runs:
         if not run["embeddings"]:
             failed = True
@@ -300,12 +304,12 @@ def finish(socket):
         # QSplit stores its units' partial matches, so the two counts differ.
         check_stored = "-QorCandi C" in row["flags"] and "-mode match" in row["flags"]
 
-        for repeat, run in enumerate(runs, 1):
+        for number, run in enumerate(runs, 1):
             finished = run.get("overtime") == "0"
             stored = run.get("stored_embeddings")
             if check_stored and finished and stored != run.get("embeddings"):
-                print(f"STORED != COUNTED: {row['id']} repeat {repeat}", flush=True)
-            writer.writerow({**row, **run, **common, "repeat": repeat})
+                print(f"STORED != COUNTED: {row['id']} run {number}", flush=True)
+            writer.writerow({**row, **run, **common, "run": number})
     os.replace(path + ".tmp", path)
 
 
