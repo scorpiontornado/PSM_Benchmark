@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Write the plan CSV for one Thesis C experiment, for run_plan.py.
 
-Usage: python3 tools/make_plan.py <experiment> <datasets_dir> <plan.csv>
+Usage: python3 tools/make_plan.py <experiment> <datasets_dir> <plan.csv> [max_threads]
 
 Run from the repo root. Experiments on the main graphs read the screened.txt files
-written by screen_queries.py.
+written by screen_queries.py. max_threads (default 64) drops the processes above it,
+for machines where 64 threads aren't allowed.
 """
 
 import csv
@@ -146,6 +147,9 @@ ALL_COMBOS = YU_COMBOS | ONETBB_COMBOS | ABLATION_COMBOS
 PILOT_COMBOS = {n: YU_COMBOS[n] for n in ["pEC-cBNS-eLFTJ", "pEC-cBNS-eCFL"]}
 
 experiment, datasets, out_path = sys.argv[1:4]
+max_threads = 64
+if len(sys.argv) > 4:
+    max_threads = int(sys.argv[4])
 rows = []
 
 
@@ -489,6 +493,7 @@ match experiment:
     case _:
         sys.exit(f"unknown experiment {experiment}")
 
+rows = [r for r in rows if int(r["threads"]) <= max_threads]
 if not rows:
     sys.exit("no processes: check the datasets directory")
 
