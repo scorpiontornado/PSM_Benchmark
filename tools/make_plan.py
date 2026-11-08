@@ -62,9 +62,10 @@ ONETBB = {}
 
 # The oneTBB ablations, each mapped to the flags that replace -schedule.
 # They run only under pEC with eLFTJ and eCFL.
-# TODO: add cBNS-cq and cOBNS-lazy as they're implemented.
-# E.g. `"cBNS-cq": "-schedule ..."`
-ONETBB_ABLATIONS = {}
+# TODO: add cOBNS-lazy once it's implemented.
+ONETBB_ABLATIONS = {
+    "cBNS-cq": "-schedule busy2idlenostop -queue concurrent",
+}
 
 # The schedules in the runtime comparison, besides the ablations.
 # TODO: add the 1-thread oneTBB runs with splitting on, once the driver has a flag for them.
@@ -326,6 +327,16 @@ match experiment:
             BOTH_COLUMNS,
             processes=1,
         )
+
+    # Every oneTBB schedule and ablation implemented so far, next to cBNS, on the
+    # 10 shipped HPRD queries, so run_plan.py's count checks catch a schedule that
+    # loses or duplicates embeddings before any timed run.
+    case "onetbb-check":
+        data = "datasets/HPRD/L15/HPRD-15.txt"
+        queries = [f"datasets/HPRD/L15/Q10/Q10-{i}.txt" for i in range(1, 11)]
+        cbns = pick(YU_COMBOS, ["pEC-cBNS-eLFTJ", "pEC-cBNS-eCFL"])
+        cells = make_cells(cbns | ONETBB_COMBOS | ABLATION_COMBOS, [1, 4, 8])
+        add_processes(data, queries, cells, ["count", "delivered"], processes=1)
 
     # The thesis build in Yu et al.'s setup against the repaired control, and the
     # repaired control against the released artifact, on the HPRD graph and queries

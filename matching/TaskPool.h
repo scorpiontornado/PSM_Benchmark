@@ -112,6 +112,14 @@ public:
 
     void subIdle();
 
+    // Each counter has a plain int, used under -queue mutex, and an atomic twin, used
+    // under -queue concurrent, where Pop runs without queue_mutex.
+    // These functions use the version of the counter depending on what the
+    // current queue uses, so the -queue mutex path does no atomic operations.
+    int reservedTaskNum();
+    void addReservedTaskNum(int n);
+    int totalTaskNum();
+
     bool checkOverTime();
 
     bool checkOver();
@@ -141,6 +149,8 @@ public:
     tbb::concurrent_queue<TaskSlot*> concurrent_task_queue;
     int reserved_task_num{0};  // 预占容量计数
     int total_task_num{0};
+    std::atomic<int> concurrent_reserved_task_num{0};
+    std::atomic<int> concurrent_total_task_num{0};
 
     // thread message
     std::atomic<ui> idle_thread_num{0};

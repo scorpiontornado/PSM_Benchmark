@@ -1897,7 +1897,7 @@ for (auto& method_type : backMethods) {
     TaskSlot::g_args->preprocessing_time_in_ns = preprocessing_time_in_ns;
     TaskSlot::g_args->total_time_in_ns = total_time_in_ns;
     TaskSlot::g_args->memory_cost_in_bytes = memory_cost_in_bytes;
-    TaskSlot::g_args->total_task_num = taskPool->total_task_num;
+    TaskSlot::g_args->total_task_num = taskPool->totalTaskNum();
     
     TaskSlot::g_args->logGlobalStatistics();
 

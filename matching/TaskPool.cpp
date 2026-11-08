@@ -56,13 +56,17 @@ TaskPool::TaskPool(uint64_t num_threads, uint64_t queue_capacity)
 
 TaskPool::~TaskPool() {
     if (TaskSlot::g_args->overtime.load()) {
-        while (!task_queue.empty()) {
-            delete task_queue.front();  // 删除指向的 TaskSlot 对象
-            task_queue.pop();           // 移除指针本身
-        }            
+        while (!Empty()) {
+            // Pop, which moves the task's LocalArgs into a temporary task;
+            // its destructor deletes the LocalArgs at end of each iteration
+            TaskSlot task;
+            Pop(task);
+        }
     }
+
     // 如果没超时，不应该出现析构taskpool但是还有任务的情况
-    while (!task_queue.empty()) {
+    // (If there was no timeout, the pool should never be destroyed with tasks left)
+    while (!Empty()) {
         LOG() << "Error: TaskPool is not empty, waiting for all tasks to finish." << std::endl;
         abort();
     }
@@ -70,19 +74,30 @@ TaskPool::~TaskPool() {
 
 bool
 TaskPool::Push(const TaskSlot& task) {
-    std::unique_lock<std::mutex> lock(queue_mutex);
-    TaskSlot* new_task = new TaskSlot(task);
-    task_queue.push(new_task);
+    if (use_concurrent_queue) {
+        concurrent_task_queue.push(new TaskSlot(task));
+    } else {
+        // New task created after taking the lock to match Yu et al. (2026)
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        TaskSlot* new_task = new TaskSlot(task);
+        task_queue.push(new_task);
+    }
     // LOG() << "PUSH size == " << Size() << std::endl;
     return true;
 }
 
 bool
 TaskPool::Push(TaskSlot&& task) {
-    std::unique_lock<std::mutex> lock(queue_mutex);
     // LOG() << "PUSH 2" << std::endl;
-    TaskSlot* new_task = new TaskSlot(std::move(task));
-    task_queue.push(new_task);
+    if (use_concurrent_queue) {
+        concurrent_task_queue.push(new TaskSlot(std::move(task)));
+    } else {
+        // New task created after taking the lock to match Yu et al. (2026)
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        TaskSlot* new_task = new TaskSlot(std::move(task));
+        task_queue.push(new_task);
+    }
+
     // LOG() << "PUSH size == " << Size() << std::endl;
     delete &task;
 
@@ -95,22 +110,34 @@ TaskPool::Push(TaskSlot&& task) {
 
 int
 TaskPool::Pop(TaskSlot& task) {
-    // TODO: chech if the std::move takes effect
-    std::unique_lock<std::mutex> lock(queue_mutex);
-    if (Empty()) {
-        // LOG() << "no task available" << std::endl;
-        return 0;
+    if (use_concurrent_queue) {
+        TaskSlot* front;
+        if (!concurrent_task_queue.try_pop(front)) {
+            // LOG() << "no task available" << std::endl;
+            return 0;
+        }
+        task = std::move(*front);
+        delete front;
+        concurrent_reserved_task_num--;
+        return ++concurrent_total_task_num; // atomic increment to avoid race
+    } else {
+        // TODO: chech if the std::move takes effect
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        if (Empty()) {
+            // LOG() << "no task available" << std::endl;
+            return 0;
+        }
+        task = std::move(*task_queue.front());
+        // LOG() << "task_queue.front() : " << task_queue.front() << std::endl;
+        // LOG() << "task_queue.front().l_args : " << task_queue.front()->l_args << std::endl;
+        delete task_queue.front();
+        task_queue.pop();
+        reserved_task_num--; // 对 reserved_task_num 进行原子递减
+        // LOG() << "reserved_task_num == " << reserved_task_num << std::endl;
+        total_task_num += 1;
+        // LOG() << "POP size == " << Size() << std::endl;
+        return total_task_num;
     }
-    task = std::move(*task_queue.front());
-    // LOG() << "task_queue.front() : " << task_queue.front() << std::endl;
-    // LOG() << "task_queue.front().l_args : " << task_queue.front()->l_args << std::endl;
-    delete task_queue.front();
-    task_queue.pop();
-    reserved_task_num--; // 对 reserved_task_num 进行原子递减
-    // LOG() << "reserved_task_num == " << reserved_task_num << std::endl;
-    total_task_num += 1;
-    // LOG() << "POP size == " << Size() << std::endl;
-    return total_task_num;
 }
 
 // bool
@@ -120,23 +147,31 @@ TaskPool::Pop(TaskSlot& task) {
 
 bool
 TaskPool::Empty() {
+    if (use_concurrent_queue) {
+        return concurrent_task_queue.empty();
+    }
     return task_queue.empty();
 }
 
+// Not safe while worker threads run: unsafe_size() does not synchronise with them.
+// Only called while the initial tasks are created, before any worker starts.
 std::size_t
 TaskPool::Size() {
+    if (use_concurrent_queue) {
+        return concurrent_task_queue.unsafe_size();
+    }
     return task_queue.size();
 }
 
 void
 TaskPool::CancelReserve() {
     std::unique_lock<std::mutex> lock(queue_mutex);
-    reserved_task_num--;
+    addReservedTaskNum(-1);
 }
 
 bool
 TaskPool::isFull() {
-    return reserved_task_num >= QUEUE_CAPACITY;
+    return reservedTaskNum() >= QUEUE_CAPACITY;
 }
 
 /**
@@ -148,7 +183,7 @@ TaskPool::isFull() {
 bool
 TaskPool::PreReserve(bool layerAll, int& containerCount, int left_idx_count) {
     std::unique_lock<std::mutex> lock(queue_mutex);
-    if (reserved_task_num >= QUEUE_CAPACITY) {
+    if (reservedTaskNum() >= QUEUE_CAPACITY) {
         // LOG() << "Full: TaskPool is full, PreReserve failed." << std::endl;
         return false;
     }
@@ -162,17 +197,17 @@ TaskPool::PreReserve(bool layerAll, int& containerCount, int left_idx_count) {
         if (schedule_type == ScheduleType::STATIC || schedule_type == ScheduleType::STATICWORKLOAD) {
             containerCount = left_idx_count;
         } else {
-            containerCount = std::min(QUEUE_CAPACITY - reserved_task_num + 1, static_cast<int64_t>(left_idx_count));
+            containerCount = std::min(QUEUE_CAPACITY - reservedTaskNum() + 1, static_cast<int64_t>(left_idx_count));
         }
         // containerCount = std::min(QUEUE_CAPACITY - reserved_task_num + 1, static_cast<int64_t>(left_idx_count));
         // containerCount = QUEUE_CAPACITY - reserved_task_num + 1;
-        reserved_task_num += (containerCount - 1);
+        addReservedTaskNum(containerCount - 1);
         // LOG() << "Add reserved_task_num: LayerAll, succeed : "
         //         << "reserved_task_num == " << reserved_task_num
         //         << ", QUEUE_CAPACITY == " << QUEUE_CAPACITY << std::endl;
     } else {
         containerCount = 2;
-        reserved_task_num += 1;
+        addReservedTaskNum(1);
         // LOG() << "Add reserved_task_num: Others, succeed : "
         //         << "reserved_task_num == " << reserved_task_num
         //         << ", QUEUE_CAPACITY == " << QUEUE_CAPACITY << std::endl;
@@ -193,6 +228,31 @@ TaskPool::addIdle() {
 void
 TaskPool::subIdle() {
     idle_thread_num--;
+}
+
+int
+TaskPool::reservedTaskNum() {
+    if (use_concurrent_queue) {
+        return concurrent_reserved_task_num.load();
+    }
+    return reserved_task_num;
+}
+
+void
+TaskPool::addReservedTaskNum(int n) {
+    if (use_concurrent_queue) {
+        concurrent_reserved_task_num += n;
+    } else {
+        reserved_task_num += n;
+    }
+}
+
+int
+TaskPool::totalTaskNum() {
+    if (use_concurrent_queue) {
+        return concurrent_total_task_num.load();
+    }
+    return total_task_num;
 }
 
 bool
@@ -277,9 +337,9 @@ if (FROZEN_SET_FLAG) {
     int tmp;
     PreReserve(false, tmp, 1);
 
-    if (task_queue.size() >= QUEUE_CAPACITY) {
+    if (Size() >= QUEUE_CAPACITY) {
         LOG() << "Error: TaskPool is full, init error" << std::endl;
-        LOG() << "task_queue.size() == " << task_queue.size() << ", QUEUE_CAPACITY == " << QUEUE_CAPACITY << std::endl;
+        LOG() << "task_queue.size() == " << Size() << ", QUEUE_CAPACITY == " << QUEUE_CAPACITY << std::endl;
         abort();
     } else {
         Push(std::move(*task));
@@ -368,7 +428,7 @@ if (FAILING_SET_FLAG) {
 
         cur_idx += cur_num;
 
-        if (task_queue.size() >= QUEUE_CAPACITY) {
+        if (Size() >= QUEUE_CAPACITY) {
             LOG() << "Error: TaskPool is full, init error" << std::endl;
             abort();
         } else {
@@ -489,7 +549,7 @@ if (FROZEN_SET_FLAG) {
 
         cur_idx += cur_num;
 
-        if (task_queue.size() >= QUEUE_CAPACITY) {
+        if (Size() >= QUEUE_CAPACITY) {
             LOG() << "Error: TaskPool is full, init error" << std::endl;
             abort();
         } else {
