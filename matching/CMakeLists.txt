@@ -20,7 +20,10 @@ set(SUBGRAPH_MATCHING_FILE_LIST
 set(GRAPH_CONVERTER_FILE_LIST
     GraphConverter.cpp)
 
+find_package(TBB REQUIRED)
+
 add_library(subgraph_lib STATIC ${SUBGRAPH_MATCHING_FILE_LIST})
+target_link_libraries(subgraph_lib PUBLIC TBB::tbb)
 add_executable(SubgraphMatching.out StudyPerformance.cpp)
 # 添加可执行文件 SubgraphMatching.out，并链接 OpenMP
 target_link_libraries(SubgraphMatching.out 

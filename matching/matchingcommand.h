@@ -53,7 +53,8 @@ enum OptionKeyword {
     JoinMethodType = 20,                  // -JoinMethod, LEFTDEEP or RIGHTDEEP
     BackMethodTypes = 21,                 // -BackMethod, DPiso or CIRCINUS
     ResultModeType = 22,                  // -mode, count | match
-    ResultSinkType = 23                   // -sink, threadlocal | globallock
+    ResultSinkType = 23,                  // -sink, threadlocal | globallock
+    QueueType = 24                        // -queue, mutex | concurrent
 };
 
 class MatchingCommand : public CommandParser{
@@ -166,6 +167,10 @@ public:
 
     std::string getSinkType() {
         return options_value[OptionKeyword::ResultSinkType] == "" ? "threadlocal" : options_value[OptionKeyword::ResultSinkType];
+    }
+
+    std::string getQueueType() {
+        return options_value[OptionKeyword::QueueType] == "" ? "mutex" : options_value[OptionKeyword::QueueType];
     }
 };
 

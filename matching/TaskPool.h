@@ -17,6 +17,7 @@
 #include <limits>
 #include <algorithm>
 #include <sstream>
+#include <tbb/concurrent_queue.h>
 
 #define MAX_THREADS_COUNT 44
 #define MINIMUM_TASK_LENGTH  2
@@ -137,6 +138,7 @@ public:
 
     static std::function<void(TaskSlot&)> enum_method;
     std::queue<TaskSlot*> task_queue;
+    tbb::concurrent_queue<TaskSlot*> concurrent_task_queue;
     int reserved_task_num{0};  // 预占容量计数
     int total_task_num{0};
 
@@ -145,6 +147,9 @@ public:
 
     ScheduleType schedule_type{ScheduleType::STATIC};
     SplitType split_type{SplitType::LINEAR};
+
+    // -queue concurrent: Push and Pop use concurrent_task_queue instead of task_queue.
+    bool use_concurrent_queue{false};
 };
 
 #endif // MATCHING_TASKPOOL_H

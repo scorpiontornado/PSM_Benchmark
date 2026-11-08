@@ -27,6 +27,7 @@ MatchingCommand::MatchingCommand(const int argc, char **argv) : CommandParser(ar
     options_key[OptionKeyword::BackMethodTypes] = "-BackMethods";
     options_key[OptionKeyword::ResultModeType] = "-mode";
     options_key[OptionKeyword::ResultSinkType] = "-sink";
+    options_key[OptionKeyword::QueueType] = "-queue";
     processOptions();
 };
 
@@ -105,6 +106,9 @@ void MatchingCommand::processOptions() {
 
     // Result Sink Type
     options_value[OptionKeyword::ResultSinkType] = getCommandOption(options_key[OptionKeyword::ResultSinkType]);
+
+    // Task queue type
+    options_value[OptionKeyword::QueueType] = getCommandOption(options_key[OptionKeyword::QueueType]);
 }
 
 void MatchingCommand::printCommandOptions() {

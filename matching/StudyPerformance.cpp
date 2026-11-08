@@ -130,6 +130,7 @@ void split_Q_test(MatchingCommand& command) {
     std::string input_nums_threads = command.getThreadNumbers();
     std::string input_type_split = command.getSplitType();
     std::string input_type_schedule = command.getScheduleType();
+    std::string input_type_queue = command.getQueueType();
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
 
@@ -807,8 +808,18 @@ for (auto& method_type : backMethods) {
         abort();
     }
 
+    if (input_type_queue == "mutex") {
+        taskPool->use_concurrent_queue = false;
+    } else if (input_type_queue == "concurrent") {
+        taskPool->use_concurrent_queue = true;
+    } else {
+        LOG() << "Error: The queue type is not defined." << std::endl;
+        abort();
+    }
+
     LOG() << "schedule_type == " << input_type_schedule << std::endl;
     LOG() << "split_type == " << input_type_split << std::endl;
+    LOG() << "queue_type == " << input_type_queue << std::endl;
 
     if (engine_type == "LFTJ") {
         EvaluateQuery::enum_method = [taskPool](TaskSlot& task, int task_id) { EvaluateQuery::LFTJ(taskPool, task, task_id); };
@@ -1041,6 +1052,7 @@ void split_C_test(MatchingCommand& command) {
     std::string input_nums_threads = command.getThreadNumbers();
     std::string input_type_split = command.getSplitType();
     std::string input_type_schedule = command.getScheduleType();
+    std::string input_type_queue = command.getQueueType();
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
 
@@ -1768,8 +1780,18 @@ for (auto& method_type : backMethods) {
         abort();
     }
 
+    if (input_type_queue == "mutex") {
+        taskPool->use_concurrent_queue = false;
+    } else if (input_type_queue == "concurrent") {
+        taskPool->use_concurrent_queue = true;
+    } else {
+        LOG() << "Error: The queue type is not defined." << std::endl;
+        abort();
+    }
+
     LOG() << "schedule_type == " << input_type_schedule << std::endl;
     LOG() << "split_type == " << input_type_split << std::endl;
+    LOG() << "queue_type == " << input_type_queue << std::endl;
 
     std::string input_type_split = command.getSplitType();
     std::string input_type_schedule = command.getScheduleType();
