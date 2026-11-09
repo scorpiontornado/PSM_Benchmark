@@ -145,17 +145,17 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
 
         for (size_t i = 0; i < tasks.size(); i++) {
             group.run([&tasks, i] {
-                auto& [task, task_id] = tasks[i];
+                auto& [slot, task_id] = tasks[i];
+                TaskSlot task = std::move(slot); // so it's freed on the worker in parallel when the lambda returns
 
                 // Run the task with the chosen enumeration kernel, like in SingleExecute
                 task.l_args->l_limit_num = TaskSlot::g_args->output_limit_num - TaskSlot::g_args->embedding_count;
                 task.start_task_time = intTimer::getClockNano();
                 enum_method(task, task_id);
                 // LOG() << "Finish task " << task_id << std::endl;
-
             });
         }
-        
+
         group.wait();
     });
 
@@ -165,7 +165,7 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
     //
     // The analysis computes idle time for both runtimes as:
     //     idle = threads * enumerate_time - sum(exec_time)
-    // which the kernels log in handleTaskResp.
+    // (exec_time is logged per task in in handleTaskResp)
 }
 
 void
