@@ -31,6 +31,7 @@ FIELDS = {
     "load_s": r"Load graphs time \(seconds\): ([\d.eE+-]+)",
     "filter_s": r"Filter vertices time \(seconds\): ([\d.eE+-]+)",
     "memory_mb": r"Memory cost \(MB\): ([\d.eE+-]+)",
+    "init_tasks_s": r"InitTasks time: ([\d.eE+-]+)",
     "stored_embeddings": r"stored embeddings: (\d+)",
     "task_num": r"TaskNum: (\d+)",
     "overtime": r"Overtime: (\d+)",
@@ -39,6 +40,7 @@ FIELDS = {
 # Per-thread lists, summed over threads.
 THREAD_FIELDS = {
     "thread_enum_s": r"Thread Enum Time:(.*)",
+    "thread_exec_s": r"Thread Execution Time:(.*)",
     "thread_split_s": r"Thread Split Time:(.*)",
     "thread_idle_s": r"Thread Idle Time:(.*)",
 }

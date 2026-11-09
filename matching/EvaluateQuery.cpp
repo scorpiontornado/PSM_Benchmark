@@ -153,12 +153,19 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
                 enum_method(task, task_id);
                 // LOG() << "Finish task " << task_id << std::endl;
 
-                // TODO: per-thread enumerate time (handleSingleExecute)
             });
         }
-
+        
         group.wait();
     });
+
+    // Per-thread enumerate time (handleSingleExecute for task pool) isn't applicable,
+    // as oneTBB worker threads can leave an arena and other workers can join it,
+    // so more than N different threads may serve the N slots.
+    //
+    // The analysis computes idle time for both runtimes as:
+    //     idle = threads * enumerate_time - sum(exec_time)
+    // which the kernels log in handleTaskResp.
 }
 
 void
