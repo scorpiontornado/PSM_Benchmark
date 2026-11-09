@@ -1021,7 +1021,8 @@ void
 TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
     auto start_time_split = std::chrono::steady_clock::now();
     // 提前返回，减少嵌套
-    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || THREADS_NUMBER == 1) {
+    // TODO: add oneTBB splitting
+    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || THREADS_NUMBER == 1 || use_onetbb) {
         return;
     }
 

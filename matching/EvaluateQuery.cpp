@@ -124,7 +124,41 @@ EvaluateQuery::ParallelExecute(TaskPool* taskPool,  SplitGraph* splitGraph, Unit
 // Runs the pool's tasks on oneTBB worker threads instead of std::threads (-runtime onetbb).
 void
 EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
-    // TODO
+    // group.run returns before its task runs, so each task and its ID need their
+    // own slot that lives until group.wait() returns.
+    std::vector<std::pair<TaskSlot, int>> tasks;
+
+    // Reserve so the vector doesn't reallocate (would deep-copy every task,
+    // as TaskSlot's move constructor isn't noexcept)
+    tasks.reserve(taskPool->Size());
+
+    TaskSlot task;
+    int task_id;
+    while ((task_id = taskPool->Pop(task))) {
+        tasks.emplace_back(std::move(task), task_id);
+    }
+
+    // Run each task inside a oneTBB task arena (execute blocks, so [&] is fine)
+    tbb::task_arena arena(taskPool->THREADS_NUMBER);
+    arena.execute([&] {
+        tbb::task_group group;
+
+        for (size_t i = 0; i < tasks.size(); i++) {
+            group.run([&tasks, i] {
+                auto& [task, task_id] = tasks[i];
+
+                // Run the task with the chosen enumeration kernel, like in SingleExecute
+                task.l_args->l_limit_num = TaskSlot::g_args->output_limit_num - TaskSlot::g_args->embedding_count;
+                task.start_task_time = intTimer::getClockNano();
+                enum_method(task, task_id);
+                // LOG() << "Finish task " << task_id << std::endl;
+
+                // TODO: per-thread enumerate time (handleSingleExecute)
+            });
+        }
+
+        group.wait();
+    });
 }
 
 void
