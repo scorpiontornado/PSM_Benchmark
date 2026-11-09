@@ -160,6 +160,9 @@ public:
 
     // -queue concurrent: Push and Pop use concurrent_task_queue instead of task_queue.
     bool use_concurrent_queue{false};
+
+    // -runtime onetbb: ParallelExecute runs the tasks on oneTBB instead of std::threads.
+    bool use_onetbb{false};
 };
 
 #endif // MATCHING_TASKPOOL_H

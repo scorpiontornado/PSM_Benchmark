@@ -54,7 +54,8 @@ enum OptionKeyword {
     BackMethodTypes = 21,                 // -BackMethod, DPiso or CIRCINUS
     ResultModeType = 22,                  // -mode, count | match
     ResultSinkType = 23,                  // -sink, threadlocal | globallock
-    QueueType = 24                        // -queue, mutex | concurrent
+    QueueType = 24,                       // -queue, mutex | concurrent
+    RuntimeType = 25                      // -runtime, taskpool | onetbb
 };
 
 class MatchingCommand : public CommandParser{
@@ -171,6 +172,10 @@ public:
 
     std::string getQueueType() {
         return options_value[OptionKeyword::QueueType] == "" ? "mutex" : options_value[OptionKeyword::QueueType];
+    }
+
+    std::string getRuntimeType() {
+        return options_value[OptionKeyword::RuntimeType] == "" ? "taskpool" : options_value[OptionKeyword::RuntimeType];
     }
 };
 

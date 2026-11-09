@@ -30,6 +30,7 @@ public:
 
     static size_t ParallelExecute(TaskPool* taskPool, SplitGraph* splitGraph, UnitArgs** unitArgsVec);
     static void SingleExecute(TaskPool* taskPool);
+    static void OneTBBExecute(TaskPool* taskPool);
     static void handleSingleExecute(std::chrono::steady_clock::time_point enum_start);
     static void handleTaskResp(int64_t l_embedding_count, ul l_call_count, std::chrono::steady_clock::time_point& time);
     static void resetExeTime(std::chrono::steady_clock::time_point& time);

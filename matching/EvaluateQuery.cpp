@@ -2,6 +2,8 @@
 #include "Materializer.h"
 #include "utility/computesetintersection.h"
 #include "utility/pretty_print.h"
+#include <tbb/task_arena.h>
+#include <tbb/task_group.h>
 #include <vector>
 #include <cstring>
 
@@ -87,6 +89,13 @@ EvaluateQuery::ParallelExecute(TaskPool* taskPool,  SplitGraph* splitGraph, Unit
         return 0;
     }
 
+    // A 1-thread GSplit run never reaches here: split_C_test sets NOSPLIT, so
+    // -runtime onetbb runs SingleExecute above, the same as the task pool.
+    if (taskPool->use_onetbb) {
+        OneTBBExecute(taskPool);
+        return 0;
+    }
+
     // thread_num > 1
     // auto start = std::chrono::steady_clock::now();
 
@@ -110,6 +119,12 @@ EvaluateQuery::ParallelExecute(TaskPool* taskPool,  SplitGraph* splitGraph, Unit
     // LOG() << "Parathreads.emplace_back(SingleExecute, taskPool) time == " << NANOSECTOSEC(enumeration_time_in_ns_para) << std::endl;
 
     return 0;
+}
+
+// Runs the pool's tasks on oneTBB worker threads instead of std::threads (-runtime onetbb).
+void
+EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
+    // TODO
 }
 
 void
