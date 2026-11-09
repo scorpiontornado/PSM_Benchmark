@@ -538,6 +538,7 @@ missing = {r["data"] for r in rows if not os.path.exists(r["data"])}
 if missing:
     print("warning: missing graphs:", *sorted(missing))
 
+os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
 with open(out_path, "w", newline="") as f:
     writer = csv.DictWriter(f, fieldnames=list(rows[0]))
     writer.writeheader()
