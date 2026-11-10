@@ -31,9 +31,7 @@ public:
     static size_t ParallelExecute(TaskPool* taskPool, SplitGraph* splitGraph, UnitArgs** unitArgsVec);
     static void SingleExecute(TaskPool* taskPool);
     static void OneTBBExecute(TaskPool* taskPool);
-    // -runtime onetbb: runs a task made by splitTask or splitTaskU in
-    // taskPool->task_group instead of pushing it to the queue. Takes ownership of task.
-    static void spawnTask(TaskPool* taskPool, TaskSlot* task);
+    static void spawnTask(TaskPool* taskPool, TaskSlot* task, int task_id);
     static void handleSingleExecute(std::chrono::steady_clock::time_point enum_start);
     static void handleTaskResp(int64_t l_embedding_count, ul l_call_count, std::chrono::steady_clock::time_point& time);
     static void resetExeTime(std::chrono::steady_clock::time_point& time);

@@ -130,33 +130,44 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
 
     // Reserve so the vector doesn't reallocate (would deep-copy every task,
     // as TaskSlot's move constructor isn't noexcept)
-    tasks.reserve(taskPool->Size());
+    // tasks.reserve(taskPool->Size());
 
-    TaskSlot task;
-    int task_id;
-    while ((task_id = taskPool->Pop(task))) {
-        tasks.emplace_back(std::move(task), task_id);
-    }
+    // TaskSlot task;
+    // int task_id;
+    // while ((task_id = taskPool->Pop(task))) {
+    //     tasks.emplace_back(std::move(task), task_id);
+    // }
 
     // Run each task inside a oneTBB task arena (execute blocks, so [&] is fine)
     tbb::task_arena arena(taskPool->THREADS_NUMBER);
     arena.execute([&] {
         tbb::task_group group;
+        taskPool->task_group = &group;
 
         for (size_t i = 0; i < tasks.size(); i++) {
-            group.run([&tasks, i] {
-                auto& [slot, task_id] = tasks[i];
+            // group.run([&tasks, i] {
+            //     auto& [slot, task_id] = tasks[i];
 
-                // Move out of the vector it's freed on the worker when the lambda returns,
-                // in parallel rather than serially on the main thread when OneTBBExecute returns
-                TaskSlot task = std::move(slot);
+            //     // Move out of the vector it's freed on the worker when the lambda returns,
+            //     // in parallel rather than serially on the main thread when OneTBBExecute returns
+            //     TaskSlot task = std::move(slot);
 
-                // Run the task with the chosen enumeration kernel, like in SingleExecute
-                task.l_args->l_limit_num = TaskSlot::g_args->output_limit_num - TaskSlot::g_args->embedding_count;
-                task.start_task_time = intTimer::getClockNano();
-                enum_method(task, task_id);
-                // LOG() << "Finish task " << task_id << std::endl;
-            });
+            //     // Run the task with the chosen enumeration kernel, like in SingleExecute
+            //     task.l_args->l_limit_num = TaskSlot::g_args->output_limit_num - TaskSlot::g_args->embedding_count;
+            //     task.start_task_time = intTimer::getClockNano();
+            //     enum_method(task, task_id);
+            //     // LOG() << "Finish task " << task_id << std::endl;
+            // });
+
+            // TODO: check - is this heap-allocated because otherwise the destructor would run at the end of each loop iteration? (Otherwise, we could just pass &slot into spawnTask, right?)
+            TaskSlot* task = new TaskSlot(); // TODO: naming - task vs slot
+            int task_id = taskPool->Pop(task); // TODO: check TaskSlot* can be cast to TaskSlot&
+            if (!task_id) {
+                // No tasks left in queue
+                delete task;
+                break;
+            }
+            spawnTask(taskPool, task, task_id);
         }
 
         group.wait();
@@ -171,9 +182,29 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
     // (exec_time is logged per task in handleTaskResp)
 }
 
+// Runs task in taskPool->task_group instead of pushing it to the queue (-runtime onetbb).
+// Takes ownership of task. The caller gives the task its ID, which also counts it in TaskNum.
 void
-EvaluateQuery::spawnTask(TaskPool* taskPool, TaskSlot* task) {
-    // TODO
+EvaluateQuery::spawnTask(TaskPool* taskPool, TaskSlot* task, int task_id) {
+    // TODO: abort if not -runtime oneTBB?
+
+    taskPool->task_group.run([task, task_id] {
+        // auto& [slot, task_id] = tasks[i];
+
+        // // Move out of the vector it's freed on the worker when the lambda returns,
+        // // in parallel rather than serially on the main thread when OneTBBExecute returns
+        // TaskSlot task = std::move(slot);
+
+        // TODO: move task out? & maybe comment on const?
+
+        // Run the task with the chosen enumeration kernel, like in SingleExecute
+        task.l_args->l_limit_num = TaskSlot::g_args->output_limit_num - TaskSlot::g_args->embedding_count;
+        task.start_task_time = intTimer::getClockNano();
+        enum_method(task, task_id);
+        // LOG() << "Finish task " << task_id << std::endl;
+    });
+
+    delete task;
 }
 
 void
