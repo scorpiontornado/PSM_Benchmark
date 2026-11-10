@@ -1,4 +1,5 @@
 #include "TaskPool.h"
+#include "EvaluateQuery.h"
 
 GLOBALARGS* TaskSlot::g_args = nullptr;
 
@@ -441,7 +442,7 @@ if (FAILING_SET_FLAG) {
 
 void
 TaskPool::candidateInitTasks(int id_unit) {
-    if (THREADS_NUMBER == 1) {
+    if (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread) {
         singleThreadInitTasks(id_unit);
         return;
     }
@@ -597,7 +598,7 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
 
     // 提前返回，减少嵌套
     // TODO: add oneTBB splitting
-    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || THREADS_NUMBER == 1 || use_onetbb) {
+    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread) || use_onetbb) {
         return;
     }
 
@@ -1023,7 +1024,7 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
     auto start_time_split = std::chrono::steady_clock::now();
     // 提前返回，减少嵌套
     // TODO: add oneTBB splitting
-    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || THREADS_NUMBER == 1 || use_onetbb) {
+    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread) || use_onetbb) {
         return;
     }
 

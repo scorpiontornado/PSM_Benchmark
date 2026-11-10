@@ -127,6 +127,9 @@ struct GLOBALARGS {
 
 
     SPLITMODE splitMode{SPLITMODE::NOSPLIT};
+    // -split1thread: a 1-thread run takes the multi-thread path (initial tasks,
+    // splitting, the runtime's threads) instead of running one task with no splits.
+    bool split_one_thread{false};
     int count_unit{0};
     UnitArgs **unitArgsVec{nullptr};
 

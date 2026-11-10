@@ -55,7 +55,8 @@ enum OptionKeyword {
     ResultModeType = 22,                  // -mode, count | match
     ResultSinkType = 23,                  // -sink, threadlocal | globallock
     QueueType = 24,                       // -queue, mutex | concurrent
-    RuntimeType = 25                      // -runtime, taskpool | onetbb
+    RuntimeType = 25,                     // -runtime, taskpool | onetbb
+    OneThreadSplit = 26                   // -split1thread, present or absent
 };
 
 class MatchingCommand : public CommandParser{
@@ -176,6 +177,10 @@ public:
 
     std::string getRuntimeType() {
         return options_value[OptionKeyword::RuntimeType] == "" ? "taskpool" : options_value[OptionKeyword::RuntimeType];
+    }
+
+    bool getSplitOneThread() {
+        return commandOptionExists(options_key[OptionKeyword::OneThreadSplit]);
     }
 };
 

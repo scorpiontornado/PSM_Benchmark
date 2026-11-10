@@ -29,6 +29,7 @@ MatchingCommand::MatchingCommand(const int argc, char **argv) : CommandParser(ar
     options_key[OptionKeyword::ResultSinkType] = "-sink";
     options_key[OptionKeyword::QueueType] = "-queue";
     options_key[OptionKeyword::RuntimeType] = "-runtime";
+    options_key[OptionKeyword::OneThreadSplit] = "-split1thread";
     processOptions();
 };
 

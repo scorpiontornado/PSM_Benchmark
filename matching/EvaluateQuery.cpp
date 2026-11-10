@@ -89,8 +89,8 @@ EvaluateQuery::ParallelExecute(TaskPool* taskPool,  SplitGraph* splitGraph, Unit
         return 0;
     }
 
-    // A 1-thread GSplit run never reaches here: split_C_test sets NOSPLIT, so
-    // -runtime onetbb runs SingleExecute above, the same as the task pool.
+    // A 1-thread GSplit run reaches here only with -split1thread; otherwise
+    // split_C_test sets NOSPLIT and it runs SingleExecute above.
     if (taskPool->use_onetbb) {
         OneTBBExecute(taskPool);
         return 0;
@@ -172,6 +172,11 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
 }
 
 void
+EvaluateQuery::spawnTask(TaskPool* taskPool, TaskSlot* task) {
+    // TODO
+}
+
+void
 EvaluateQuery::handleSingleExecute(std::chrono::steady_clock::time_point enum_start) {
     auto enum_end = std::chrono::steady_clock::now();
     int64_t enumeration_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(enum_end - enum_start).count();
@@ -183,7 +188,7 @@ EvaluateQuery::SingleExecute(TaskPool* taskPool) {
     // LOG() << taskPool->Size() << std::endl;
     auto enum_start = std::chrono::steady_clock::now();
 
-    if (taskPool->THREADS_NUMBER == 1) {
+    if (taskPool->THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread) {
         TaskSlot task;
         int task_id = taskPool->Pop(task);
         // LOG() << "Single Thread Execute Task ID = " << task_id << std::endl;

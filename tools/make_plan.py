@@ -59,7 +59,7 @@ QSPLIT_PATTERNS = {
 # TODO: add the oneTBB schedules as they're implemented.
 # E.g. `"cOBNS": (["pEC", "pFL"], "-schedule ...")`
 ONETBB = {
-    "cOST": (["pFL"], "-schedule static -runtime onetbb"),
+    "cOST": (["pFL"], "-schedule static -runtime onetbb -queue concurrent"),
 }
 
 # The oneTBB ablations, each mapped to the flags that replace -schedule.

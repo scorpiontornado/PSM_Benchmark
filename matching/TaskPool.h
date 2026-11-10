@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <sstream>
 #include <tbb/concurrent_queue.h>
+#include <tbb/task_group.h>
 
 #define MAX_THREADS_COUNT 44
 #define MINIMUM_TASK_LENGTH  2
@@ -163,6 +164,10 @@ public:
 
     // -runtime onetbb: ParallelExecute runs the tasks on oneTBB instead of std::threads.
     bool use_onetbb{false};
+
+    // -runtime onetbb: the task_group OneTBBExecute runs its tasks in, so that
+    // splitTask and splitTaskU can add tasks to it through EvaluateQuery::spawnTask.
+    tbb::task_group* task_group{nullptr};
 };
 
 #endif // MATCHING_TASKPOOL_H

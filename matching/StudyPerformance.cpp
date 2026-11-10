@@ -826,6 +826,11 @@ for (auto& method_type : backMethods) {
         abort();
     }
 
+    if (command.getSplitOneThread()) {
+        LOG() << "Error: -split1thread supports only -QorCandi C." << std::endl;
+        abort();
+    }
+
     if (engine_type == "LFTJ") {
         EvaluateQuery::enum_method = [taskPool](TaskSlot& task, int task_id) { EvaluateQuery::LFTJ(taskPool, task, task_id); };
         EvaluateQuery::ParallelExecute(taskPool, multigraphs, unitArgsVec);
@@ -1059,6 +1064,7 @@ void split_C_test(MatchingCommand& command) {
     std::string input_type_schedule = command.getScheduleType();
     std::string input_type_queue = command.getQueueType();
     std::string input_type_runtime = command.getRuntimeType();
+    bool split_one_thread = command.getSplitOneThread();
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
 
@@ -1388,8 +1394,11 @@ for (auto& method_type : backMethods) {
 
     TaskSlot::g_args = new GLOBALARGS(data_graph, query_graph, edge_matrix,
         candidates, candidates_count, output_limit, time_limit);
+    TaskSlot::g_args->split_one_thread = split_one_thread;
 
-    if (num_threads == 1) {
+    // With -split1thread, a 1-thread run keeps splitting to measure the runtime's
+    // overhead compared to the 1-thread NOSPLIT run of the same kernel.
+    if (num_threads == 1 && !split_one_thread) {
         TaskSlot::g_args->splitMode = SPLITMODE::NOSPLIT;
         // LOG() << "SplitMode: NOSPLIT" << std::endl;
     } else {
@@ -1801,6 +1810,16 @@ for (auto& method_type : backMethods) {
         taskPool->use_onetbb = true;
     } else {
         LOG() << "Error: The runtime type is not defined." << std::endl;
+        abort();
+    }
+
+    // Under oneTBB, the pool's queue is only used for handing the initial tasks
+    // to OneTBBExecute in one serial loop, so its type doesn't affect timings.
+    // The concurrent queue is required for its atomic task counter, read by TaskNum:
+    // tasks spawned at split points are counted from several workers in parallel.
+    if (taskPool->use_onetbb && !taskPool->use_concurrent_queue) {
+        LOG() << "Error: -runtime onetbb needs -queue concurrent, for its atomic task "
+                 "counter (the queue itself only holds the initial tasks)." << std::endl;
         abort();
     }
 
