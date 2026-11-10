@@ -1,27 +1,29 @@
 #ifndef MATCHING_TASKPOOL_H
 #define MATCHING_TASKPOOL_H
 
-#include "graph/graph.h"
-#include "Args.h"
-#include "utility/QFliter.h"
-#include "utility/statistics/Logs.h"
-#include "utility/statistics/intTimer.h"
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <cstring>
-#include <vector>
-#include <queue>
-#include <bitset>
-#include <functional>
-#include <limits>
-#include <algorithm>
-#include <sstream>
 #include <tbb/concurrent_queue.h>
 #include <tbb/task_group.h>
 
+#include <algorithm>
+#include <bitset>
+#include <condition_variable>
+#include <cstring>
+#include <functional>
+#include <limits>
+#include <mutex>
+#include <queue>
+#include <sstream>
+#include <thread>
+#include <vector>
+
+#include "Args.h"
+#include "graph/graph.h"
+#include "utility/QFliter.h"
+#include "utility/statistics/Logs.h"
+#include "utility/statistics/intTimer.h"
+
 #define MAX_THREADS_COUNT 44
-#define MINIMUM_TASK_LENGTH  2
+#define MINIMUM_TASK_LENGTH 2
 
 // for global variables, use shallow copy
 // for local variables, use deep copy
@@ -31,55 +33,56 @@
 // 所有的INIT的时候都是 thread_num 个任务，而不是 capacity 个任务
 
 enum ScheduleType {
-    STATIC = 0,   // capacity = 2 * thread_num for Shixuan
+    STATIC = 0,  // capacity = 2 * thread_num for Shixuan
     // BUSY2IDLE = 1,  // capacity == thread_num for for Shixuan
-    TIMEOUT = 1,    // capacity same as DEFAULT for Shixuan
-    BUSY2IDLENOSTOP = 2, //
-    BUSY2IDLEDEPTHSTOP = 3, //
+    TIMEOUT = 1,             // capacity same as DEFAULT for Shixuan
+    BUSY2IDLENOSTOP = 2,     //
+    BUSY2IDLEDEPTHSTOP = 3,  //
     STATICWORKLOAD = 4,
 };
 
 enum SplitType {
     // SHIXUAN = 0,    // 随意在某一层分
     // BENU = 1,       // 只 init，后面不分
-    LINEAR = 1,     // 线性分
-    WORKLOAD = 2,   // 根据workload分
-    UPPERONE = 3,   // 只分一个candidate出去
-    LAYER = 4,  // 尽可能把这一层全部分掉，但是相比于 pRI/VF系列 那种，不能把所有中间状态全部维护，加了一个 CAPACITY 的限制
+    LINEAR = 1,    // 线性分
+    WORKLOAD = 2,  // 根据workload分
+    UPPERONE = 3,  // 只分一个candidate出去
+    LAYER = 4,  // 尽可能把这一层全部分掉，但是相比于 pRI/VF系列
+                // 那种，不能把所有中间状态全部维护，加了一个 CAPACITY 的限制
 };
 
 // task only contains necessary information like indices
 class TaskSlot {
-public:
+   public:
     TaskSlot() = default;
     explicit TaskSlot(LocalArgs* l_args) = delete;
-    
+
     // Copy constructor
     TaskSlot(const TaskSlot& task);
-    
+
     // Move constructor
     TaskSlot(TaskSlot&& task);
-    
+
     // Copy assignment operator
     TaskSlot& operator=(const TaskSlot& task);
-    
+
     // Move assignment operator
     TaskSlot& operator=(TaskSlot&& task);
-    
+
     ~TaskSlot();
 
     bool checkSplitTimeout();
 
-public:
+   public:
     static GLOBALARGS* g_args;
-    LocalArgs* l_args{nullptr}; // Initialize to nullptr
+    LocalArgs* l_args{nullptr};  // Initialize to nullptr
     // int id_unit{-1};
     int64_t start_task_time{0};
-    int64_t timeThreshold{100'000'000}; // default by 0.1s
+    int64_t timeThreshold{100'000'000};  // default by 0.1s
 };
 
 class TaskPool {
-public:
+   public:
     TaskPool(uint64_t num_threads, uint64_t queue_capacity);
     ~TaskPool();
     bool Empty();
@@ -106,15 +109,16 @@ public:
 
     void splitTask(TaskSlot& parent_task, int down_depth);
     void splitTaskU(TaskSlot& parent_task, int down_depth);
-    
-    void handleSplitTime(std::chrono::_V2::steady_clock::time_point start_time_split);
+
+    void handleSplitTime(
+        std::chrono::_V2::steady_clock::time_point start_time_split);
 
     void addIdle();
 
     void subIdle();
 
-    // Each counter has a plain int, used under -queue mutex, and an atomic twin, used
-    // under -queue concurrent, where Pop runs without queue_mutex.
+    // Each counter has a plain int, used under -queue mutex, and an atomic
+    // twin, used under -queue concurrent, where Pop runs without queue_mutex.
     // These functions use the version of the counter depending on what the
     // current queue uses, so the -queue mutex path does no atomic operations.
     int reservedTaskNum();
@@ -125,21 +129,31 @@ public:
 
     bool checkOver();
 
-    void layerDistribution(int containerCount, ui* left_valid_candidate_idx, ui left_idx_count, 
-                                std::vector<ui*> calculated_valid_candidate_idx_vec, std::vector<ui>& idx_count_cur_vec);
+    void layerDistribution(int containerCount, ui* left_valid_candidate_idx,
+                           ui left_idx_count,
+                           std::vector<ui*> calculated_valid_candidate_idx_vec,
+                           std::vector<ui>& idx_count_cur_vec);
 
-    void linearDistribution(int containerCount, ui* left_valid_candidate_idx, ui left_idx_count,
-                                std::vector<ui*> calculated_valid_candidate_idx_vec, std::vector<ui>& idx_count_cur_vec);
+    void linearDistribution(int containerCount, ui* left_valid_candidate_idx,
+                            ui left_idx_count,
+                            std::vector<ui*> calculated_valid_candidate_idx_vec,
+                            std::vector<ui>& idx_count_cur_vec);
 
-    void workloadDistribution(TaskSlot& parent_task, int containerCount, ui* left_valid_candidate_idx, ui left_idx_count,
-                                std::vector<ui*> calculated_valid_candidate_idx_vec, std::vector<ui>& idx_count_cur_vec, UnitArgs* u_args, VertexID u);
+    void workloadDistribution(
+        TaskSlot& parent_task, int containerCount, ui* left_valid_candidate_idx,
+        ui left_idx_count, std::vector<ui*> calculated_valid_candidate_idx_vec,
+        std::vector<ui>& idx_count_cur_vec, UnitArgs* u_args, VertexID u);
 
-    void upperoneDistribution(int containerCount, ui* left_valid_candidate_idx, ui left_idx_count,
-                                std::vector<ui*> calculated_valid_candidate_idx_vec, std::vector<ui>& idx_count_cur_vec);
-    
-    void printDistribution(int containerCount, std::vector<ui*> calculated_valid_candidate_idx_vec, std::vector<ui> idx_count_cur_vec);
+    void upperoneDistribution(
+        int containerCount, ui* left_valid_candidate_idx, ui left_idx_count,
+        std::vector<ui*> calculated_valid_candidate_idx_vec,
+        std::vector<ui>& idx_count_cur_vec);
 
-public:
+    void printDistribution(int containerCount,
+                           std::vector<ui*> calculated_valid_candidate_idx_vec,
+                           std::vector<ui> idx_count_cur_vec);
+
+   public:
     std::mutex queue_mutex;
     std::condition_variable cv;
     uint64_t THREADS_NUMBER{1};
@@ -159,15 +173,18 @@ public:
     ScheduleType schedule_type{ScheduleType::STATIC};
     SplitType split_type{SplitType::LINEAR};
 
-    // -queue concurrent: Push and Pop use concurrent_task_queue instead of task_queue.
+    // -queue concurrent: Push and Pop use concurrent_task_queue instead of
+    // task_queue.
     bool use_concurrent_queue{false};
 
-    // -runtime onetbb: ParallelExecute runs the tasks on oneTBB instead of std::threads.
+    // -runtime onetbb: ParallelExecute runs the tasks on oneTBB instead of
+    // std::threads.
     bool use_onetbb{false};
 
     // -runtime onetbb: the task_group OneTBBExecute runs its tasks in, so that
-    // splitTask and splitTaskU can add tasks to it through EvaluateQuery::spawnTask.
+    // splitTask and splitTaskU can add tasks to it through
+    // EvaluateQuery::spawnOneTBBTask.
     tbb::task_group* task_group{nullptr};
 };
 
-#endif // MATCHING_TASKPOOL_H
+#endif  // MATCHING_TASKPOOL_H
