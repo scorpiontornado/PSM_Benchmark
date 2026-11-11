@@ -56,10 +56,18 @@ QSPLIT_PATTERNS = {
 }
 
 # The oneTBB schedules, each mapped to its splits and the flags that replace -schedule.
-# TODO: add the oneTBB schedules as they're implemented.
-# E.g. `"cOBNS": (["pEC", "pFL"], "-schedule ...")`
+# oneTBB needs -queue concurrent for its atomic task counter.
+# TODO: add cOTO once it's implemented.
 ONETBB = {
     "cOST": (["pFL"], "-schedule static -runtime onetbb -queue concurrent"),
+    "cOBNS": (
+        ["pEC", "pFL"],
+        "-schedule busy2idlenostop -runtime onetbb -queue concurrent",
+    ),
+    "cOBDS": (
+        ["pEC", "pFL"],
+        "-schedule busy2idledepthstop -runtime onetbb -queue concurrent",
+    ),
 }
 
 # The oneTBB ablations, each mapped to the flags that replace -schedule.
@@ -70,8 +78,12 @@ ONETBB_ABLATIONS = {
 }
 
 # The schedules in the runtime comparison, besides the ablations.
-# TODO: add the 1-thread oneTBB runs with splitting on, once the driver has a flag for them.
 RUNTIME_SCHEDULES = ["cBNS", "cBDS", "cOBNS", "cOBDS"]
+
+# The schedules that also run at 1 thread with splitting on (-split1thread), which
+# measures each runtime's own overhead against the 1-thread NOSPLIT run.
+# cBDS and cBNS-cq would repeat cBNS: one thread is never idle, so they never split.
+SPLIT_ONE_THREAD = ["cBNS", "cOBNS", "cOBDS"]
 
 # The graph comparison: ranks 1, 11, ..., 51 of HPRD's delivered sweep at 16 threads.
 # TODO: fill in from the HPRD sweep; these two are placeholders.
@@ -209,6 +221,16 @@ def with_one_thread(combos, threads=THREADS):
     return make_cells(combos, threads) + make_cells(one_thread, [1])
 
 
+def split_one_thread(combos):
+    """1-thread cells with -split1thread, for the combinations in SPLIT_ONE_THREAD."""
+    cells = []
+    for name, flags in combos.items():
+        schedule = "-".join(name.split("-")[1:-1])
+        if schedule in SPLIT_ONE_THREAD:
+            cells.append((name, f"{flags} -split1thread", 1))
+    return cells
+
+
 def add_processes(
     data,
     queries,
@@ -337,7 +359,8 @@ match experiment:
         data = "datasets/HPRD/L15/HPRD-15.txt"
         queries = [f"datasets/HPRD/L15/Q10/Q10-{i}.txt" for i in range(1, 11)]
         cbns = pick(YU_COMBOS, ["pEC-cBNS-eLFTJ", "pEC-cBNS-eCFL"])
-        cells = make_cells(cbns | ONETBB_COMBOS | ABLATION_COMBOS, [1, 4, 8])
+        combos = cbns | ONETBB_COMBOS | ABLATION_COMBOS
+        cells = make_cells(combos, [1, 4, 8]) + split_one_thread(combos)
         add_processes(data, queries, cells, ["count", "delivered"], processes=1)
 
     # The thesis build in Yu et al.'s setup against the repaired control, and the
@@ -408,7 +431,7 @@ match experiment:
             add_processes(
                 graph_path(name, labels),
                 screened_queries(name, labels, 3),
-                with_one_thread(combos),
+                with_one_thread(combos) + split_one_thread(combos),
                 ["delivered"],
                 processes=5,
             )
@@ -520,7 +543,7 @@ match experiment:
             add_processes(
                 data,
                 queries,
-                with_one_thread(runtime),
+                with_one_thread(runtime) + split_one_thread(runtime),
                 ["delivered"],
                 processes=1,
                 runs=3,

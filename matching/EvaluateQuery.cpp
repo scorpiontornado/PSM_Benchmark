@@ -155,7 +155,8 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
 }
 
 // Runs task in taskPool->task_group instead of pushing it to the queue (-runtime onetbb).
-// Takes ownership of task. The caller gives the task its ID, which also counts it in TaskNum.
+// Takes ownership of task, which must come from new as it is deleted after it runs.
+// The caller gives the task its ID, which also counts it in TaskNum.
 void
 EvaluateQuery::spawnOneTBBTask(TaskPool* taskPool, TaskSlot* task, int task_id) {
     // run calls the lambda as const; the captured pointer is const but the TaskSlot it points to isn't

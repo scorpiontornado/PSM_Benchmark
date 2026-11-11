@@ -597,8 +597,7 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
     auto start_time_split = std::chrono::steady_clock::now();
 
     // 提前返回，减少嵌套
-    // TODO: add oneTBB splitting
-    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread) || use_onetbb) {
+    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread)) {
         return;
     }
 
@@ -643,7 +642,9 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
         }
     }
 
-    if (isFull()) { return; }
+    if (!use_onetbb && isFull()) {
+        return;
+    }
 
     switch (schedule_type) {
         case ScheduleType::STATIC:
@@ -658,7 +659,8 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
 
         case ScheduleType::BUSY2IDLENOSTOP:
         {
-            if (idle_thread_num == 0) {
+            // Don't split if no threads are idle (task pool only - oneTBB doesn't use the counter)
+            if (!use_onetbb && idle_thread_num == 0) {
                 // LOG() << "No idle thread." << std::endl;
                 return;
             }
@@ -671,7 +673,8 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
          */
         case ScheduleType::BUSY2IDLEDEPTHSTOP:
         {
-            if (idle_thread_num == 0) {
+            // Don't split if no threads are idle (task pool only - oneTBB doesn't use the counter)
+            if (!use_onetbb && idle_thread_num == 0) {
                 return;
             }
             int tmp_depth = parent_task.l_args->upper_depth;
@@ -771,7 +774,14 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
                     成功了就正常分配，逻辑不变
         */
         int containerCount;
-        if (!PreReserve(split_type == SplitType::LAYER, containerCount, left_idx_count)) {
+        if (use_onetbb) {
+            // No cap under oneTBB: one piece per remaining candidate under -split layer, otherwise halve
+            if (split_type == SplitType::LAYER) {
+                containerCount = left_idx_count;
+            } else {
+                containerCount = 2;
+            }
+        } else if (!PreReserve(split_type == SplitType::LAYER, containerCount, left_idx_count)) {
             return;
         }
 
@@ -1002,9 +1012,13 @@ for (int ii = 1; ii < containerCount; ++ii) { // start for loop
         parent_task.l_args->splited_u_set.emplace(u);
         l_args->splited_u_set = parent_task.l_args->splited_u_set;
 
-        // push 到任务队列中
-        Push(std::move(*task));
-        cv.notify_one();
+        if (use_onetbb) {
+            EvaluateQuery::spawnOneTBBTask(this, task, ++concurrent_total_task_num);
+        } else {
+            // push 到任务队列中
+            Push(std::move(*task));
+            cv.notify_one();
+        }
 } // end for loop
 
         parent_task.start_task_time = intTimer::getClockNano();
@@ -1023,8 +1037,7 @@ void
 TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
     auto start_time_split = std::chrono::steady_clock::now();
     // 提前返回，减少嵌套
-    // TODO: add oneTBB splitting
-    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread) || use_onetbb) {
+    if (TaskSlot::g_args->splitMode == SPLITMODE::NOSPLIT || (THREADS_NUMBER == 1 && !TaskSlot::g_args->split_one_thread)) {
         return;
     }
 
@@ -1070,7 +1083,9 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
         }
     }
 
-    if (isFull()) { return;}
+    if (!use_onetbb && isFull()) {
+        return;
+    }
 
     switch (schedule_type) {
         case ScheduleType::STATIC:
@@ -1085,7 +1100,8 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
 
         case ScheduleType::BUSY2IDLENOSTOP:
         {
-            if (idle_thread_num == 0) {
+            // Don't split if no threads are idle (task pool only - oneTBB doesn't use the counter)
+            if (!use_onetbb && idle_thread_num == 0) {
                 // LOG() << "No idle thread." << std::endl;
                 return;
             }
@@ -1094,7 +1110,8 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
         
         case ScheduleType::BUSY2IDLEDEPTHSTOP:
         {
-            if (idle_thread_num == 0) {
+            // Don't split if no threads are idle (task pool only - oneTBB doesn't use the counter)
+            if (!use_onetbb && idle_thread_num == 0) {
                 return;
             }
             int tmp_depth = parent_task.l_args->upper_depth;
@@ -1193,7 +1210,14 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
                     成功了就正常分配，逻辑不变
         */
         int containerCount;
-        if (!PreReserve(split_type == SplitType::LAYER, containerCount, left_idx_count)) {
+        if (use_onetbb) {
+            // No cap under oneTBB: one piece per remaining candidate under -split layer, otherwise halve
+            if (split_type == SplitType::LAYER) {
+                containerCount = left_idx_count;
+            } else {
+                containerCount = 2;
+            }
+        } else if (!PreReserve(split_type == SplitType::LAYER, containerCount, left_idx_count)) {
             return;
         }
 
@@ -1411,9 +1435,13 @@ if (FROZEN_SET_FLAG) {
 
         // LOG() << "QUEUE_CAPACITY : " << QUEUE_CAPACITY << std::endl;
 
-        Push(std::move(*task));
-        // LOG() << "notify one" << std::endl;
-        cv.notify_one();
+        if (use_onetbb) {
+            EvaluateQuery::spawnOneTBBTask(this, task, ++concurrent_total_task_num);
+        } else {
+            Push(std::move(*task));
+            // LOG() << "notify one" << std::endl;
+            cv.notify_one();
+        }
 
 } // end for loop
 
