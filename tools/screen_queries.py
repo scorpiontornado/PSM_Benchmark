@@ -43,9 +43,16 @@ for bin_dir in bin_dirs:
             for timer in ["Enumerate time", "Consolidation time"]:
                 seconds += float(re.findall(timer + r" \(seconds\): (\S+)", text)[-1])
             passed.append(f"{name} {seconds:.3f}")
-            if len(passed) == count:
-                break
+            last = f"{name} passed in {seconds:.1f} s"
+        else:
+            last = f"{name} did not finish"
+
+        # This line overwrites itself, but the line at the end of each bin stays.
+        progress = f"{bin_dir}: {len(passed)} of {tried} tried passed, {last}"
+        print(f"\r\033[K{progress}", end="", flush=True)
+        if len(passed) == count:
+            break
 
     with open(os.path.join(bin_dir, "screened.txt"), "w") as out:
         out.write("\n".join(passed) + "\n")
-    print(f"{bin_dir}: {len(passed)} of {tried} tried passed")
+    print(f"\r\033[K{bin_dir}: {len(passed)} of {tried} tried passed")

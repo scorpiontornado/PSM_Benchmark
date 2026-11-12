@@ -54,6 +54,10 @@ PROCESS_FIELDS = {
 # Physical cores per socket on ICML2. Socket s has CPUs s * 16 to s * 16 + 15.
 SOCKET_CORES = 16
 
+# Moves to the start of the terminal line and erases it, so the progress line can be
+# overwritten by the next one or by a message that should stay on screen.
+CLEAR_LINE = "\r\033[K"
+
 
 def cpu_list(cpus):
     """The CPU numbers in a taskset list, so "0-2,8" gives [0, 1, 2, 8]."""
@@ -200,12 +204,15 @@ for row in todo:
 # so the ones that run alone don't keep draining the other socket.
 rng = random.Random(args.seed)
 order = []
+# Number of processes started when a pass ends -> that pass's number.
+pass_ends = {}
 for p in sorted(passes):
     pairable = [r for r in passes[p] if r["id"] not in alone_ids]
     alone = [r for r in passes[p] if r["id"] in alone_ids]
     rng.shuffle(pairable)
     rng.shuffle(alone)
     order += pairable + alone
+    pass_ends[len(order)] = p
 print(
     f"{len(todo)} of {len(plan)} processes to run, in {len(passes)} passes", flush=True
 )
@@ -275,7 +282,7 @@ def finish(socket):
             failed = True
     if failed:
         name = f"{row['experiment']} {row['combination']} t={row['threads']}"
-        print(f"FAILED: {name}, see {job['log']}", flush=True)
+        print(f"{CLEAR_LINE}FAILED: {name}, see {job['log']}", flush=True)
 
     # A process with no runs still gets one row, so the failure shows in the results
     # and the next resume runs it again.
@@ -310,7 +317,8 @@ def finish(socket):
             finished = run.get("overtime") == "0"
             stored = run.get("stored_embeddings")
             if check_stored and finished and stored != run.get("embeddings"):
-                print(f"STORED != COUNTED: {row['id']} run {number}", flush=True)
+                message = f"STORED != COUNTED: {row['id']} run {number}"
+                print(CLEAR_LINE + message, flush=True)
             writer.writerow({**row, **run, **common, "run": number})
     os.replace(path + ".tmp", path)
 
@@ -328,6 +336,7 @@ def wait_for_one():
 
 # A process that runs alone waits for the machine to empty, then holds it until done.
 # A paired process waits for a free socket.
+batch_start = time.time()
 for n, row in enumerate(order, 1):
     if row["id"] in alone_ids:
         while running:
@@ -342,8 +351,16 @@ for n, row in enumerate(order, 1):
             socket = 1
         start(row, socket, "pair")
 
-    if n % 100 == 0:
-        print(f"{n}/{len(todo)} started", flush=True)
+    # The progress line overwrites itself. The line at the end of a pass stays.
+    minutes = (time.time() - batch_start) / 60
+    left = minutes / n * (len(todo) - n)
+    progress = (
+        f"{n}/{len(todo)} started, {minutes:.0f} min so far, about {left:.0f} left"
+    )
+    print(CLEAR_LINE + progress, end="", flush=True)
+    if n in pass_ends:
+        done = f"pass {pass_ends[n]} of {len(passes)} started, {minutes:.0f} min so far"
+        print(CLEAR_LINE + done, flush=True)
 
 while running:
     wait_for_one()
