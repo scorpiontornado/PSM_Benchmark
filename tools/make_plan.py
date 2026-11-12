@@ -166,6 +166,7 @@ max_threads = 64
 if len(sys.argv) > 4:
     max_threads = int(sys.argv[4])
 rows = []
+unscreened = []
 
 
 def graph_path(name, labels):
@@ -173,10 +174,18 @@ def graph_path(name, labels):
 
 
 def screened_queries(name, labels, per_bin, bins=BINS):
-    """The first `per_bin` queries that passed screening in each density bin."""
+    """The first `per_bin` queries that passed screening in each density bin.
+
+    A bin that has not been screened gives no queries and is added to `unscreened`,
+    which is printed as a warning with the plan's size.
+    """
     queries = []
     for b in bins:
         pool = f"{datasets}/{name}/L{labels}/Q10/bin{b}"
+        if not os.path.exists(f"{pool}/screened.txt"):
+            unscreened.append(f"{name}/L{labels}/bin{b}")
+            continue
+
         with open(f"{pool}/screened.txt") as f:
             passed = [line.split()[0] for line in f if line.strip()]
         queries += [f"{pool}/{query}" for query in passed[:per_bin]]
@@ -436,6 +445,32 @@ match experiment:
                 processes=5,
             )
 
+    # A small runtime comparison for trying out a change to the runtime: on DBLP, the
+    # screened query in each bin that took longest on 1 thread, at 16 threads, plus
+    # the 1-thread runs. Not for reported results.
+    case "runtime-quick":
+        schedules = RUNTIME_SCHEDULES + list(ONETBB_ABLATIONS)
+        combos = pick(
+            ALL_COMBOS, [f"pEC-{c}-{e}" for c in schedules for e in ["eLFTJ", "eCFL"]]
+        )
+
+        queries = []
+        for b in BINS:
+            pool = f"{datasets}/dblp/L15/Q10/bin{b}"
+            with open(f"{pool}/screened.txt") as f:
+                passed = [line.split() for line in f if line.strip()]
+            query, seconds = max(passed, key=lambda p: float(p[1]))
+            print(f"{pool}/{query}: {seconds} s on 1 thread in screening")
+            queries.append(f"{pool}/{query}")
+
+        add_processes(
+            graph_path("dblp", "15"),
+            queries,
+            with_one_thread(combos, [16]) + split_one_thread(combos),
+            ["delivered"],
+            processes=3,
+        )
+
     # The slowest screened query in each bin, under three CPU sets: one socket,
     # two sockets, and one socket's cores with their SMT siblings.
     case "placement":
@@ -560,6 +595,8 @@ if not rows:
 missing = {r["data"] for r in rows if not os.path.exists(r["data"])}
 if missing:
     print("warning: missing graphs:", *sorted(missing))
+if unscreened:
+    print("warning: not screened, so left out:", *unscreened)
 
 os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
 with open(out_path, "w", newline="") as f:
