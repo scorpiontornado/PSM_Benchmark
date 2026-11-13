@@ -14,16 +14,26 @@ import statistics
 import sys
 
 # (graph, combination, threads, query) -> each run's EPS, task count, split share
-# and time per task.
+# and time per task. A query is left out of a cell if any of its runs hit the time limit.
 cells = {}
+# (graph, combination, threads) -> the queries tried, and those with a run that timed out.
+tried = {}
+timed_out = {}
 with open(sys.argv[1]) as f:
     for r in csv.DictReader(f):
-        if r["delivery"] != "delivered" or r["overtime"] != "0" or not r["eps"]:
+        if r["delivery"] != "delivered" or not r["eps"]:
             continue
 
         threads = r["threads"]
         if "-split1thread" in r["flags"]:
             threads = "1 split"
+
+        graph = r["data"].split("/")[-1].removesuffix(".txt")
+        row_key = (graph, r["combination"], threads)
+        tried.setdefault(row_key, set()).add(r["query"])
+        if r["overtime"] != "0":
+            timed_out.setdefault(row_key, set()).add(r["query"])
+            continue
 
         split_share = 0
         if float(r["thread_exec_s"] or 0) > 0:
@@ -34,10 +44,13 @@ with open(sys.argv[1]) as f:
         if int(r["task_num"] or 0) > 0:
             task_us = float(r["thread_split_s"] or 0) / int(r["task_num"]) * 1e6
 
-        graph = r["data"].split("/")[-1].removesuffix(".txt")
         key = (graph, r["combination"], threads, r["query"])
         run = (float(r["eps"]), int(r["task_num"] or 0), split_share, task_us)
         cells.setdefault(key, []).append(run)
+
+for (graph, combination, threads), queries in timed_out.items():
+    for query in queries:
+        cells.pop((graph, combination, threads, query), None)
 
 # (graph, combination, threads) -> one (ratio, tasks, split share, time per task)
 # per query.
@@ -58,14 +71,25 @@ for (graph, combination, threads, query), runs in cells.items():
     row = (eps / baseline_eps, tasks, split_share, task_us)
     table.setdefault((graph, combination, threads), []).append(row)
 
-print("median over queries (min-max for the EPS ratio)")
+print("median over the queries that finished in every run (min-max for the EPS ratio)")
+print("A row with unfinished queries covers only its faster queries.")
 header = f"{'graph':12} {'combination':20} {'threads':8} {'EPS ratio':22}"
-print(header, "tasks    split/exec  us/task")
-for (graph, combination, threads), per_query in sorted(table.items()):
+print(header, "finished  tasks    split/exec  us/task")
+for graph, combination, threads in sorted(tried):
+    row_key = (graph, combination, threads)
+    if row_key not in table:
+        # A baseline row has no ratio to print; any other row here finished no query.
+        if row_key in timed_out:
+            print(f"{graph:12} {combination:20} {threads:8} {'-':22}", end=" ")
+            print(f"0/{len(tried[row_key])}")
+        continue
+
+    per_query = table[row_key]
     ratios = [row[0] for row in per_query]
     ratio = f"{statistics.median(ratios):.2f} ({min(ratios):.2f}-{max(ratios):.2f})"
     tasks = statistics.median(row[1] for row in per_query)
     split_share = statistics.median(row[2] for row in per_query)
     name = f"{graph:12} {combination:20} {threads:8} {ratio:22}"
     task_us = statistics.median(row[3] for row in per_query)
-    print(name, f"{tasks:<8.0f} {split_share:<11.2f} {task_us:.1f}")
+    finished = f"{len(per_query)}/{len(tried[row_key])}"
+    print(name, f"{finished:<9} {tasks:<8.0f} {split_share:<11.2f} {task_us:.1f}")

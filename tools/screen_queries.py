@@ -12,9 +12,11 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 
 binary, graph, count, *bin_dirs = sys.argv[1:]
 count = int(count)
+start = time.time()
 
 for bin_dir in bin_dirs:
     names = os.listdir(bin_dir)
@@ -55,4 +57,8 @@ for bin_dir in bin_dirs:
 
     with open(os.path.join(bin_dir, "screened.txt"), "w") as out:
         out.write("\n".join(passed) + "\n")
-    print(f"\r\033[K{bin_dir}: {len(passed)} of {tried} tried passed")
+    minutes = (time.time() - start) / 60
+    summary = f"{bin_dir}: {len(passed)} of {tried} tried passed"
+    print(f"\r\033[K{summary}, {minutes:.0f} min so far")
+
+print(f"done in {(time.time() - start) / 60:.0f} min")

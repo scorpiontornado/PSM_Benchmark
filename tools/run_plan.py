@@ -11,6 +11,7 @@ Each process writes its driver log and rows to <results_dir>/runs/,
 and <results_dir>/results.csv collects the rows of the plan's processes at the end.
 Rerunning skips processes that already have their rows, so a killed batch resumes.
 Files of processes no longer in the plan stay in runs/ but are left out of results.csv.
+Each batch appends the machine's state at its start to <results_dir>/machine.txt.
 """
 
 import argparse
@@ -334,6 +335,13 @@ def wait_for_one():
         time.sleep(0.05)
 
 
+# Record the machine's state at the start of every batch, for the write-up.
+with open(os.path.join(args.results_dir, "machine.txt"), "a") as f:
+    for command in ["date", "uptime", "who", "vmstat 1 5", "lscpu", "free -g"]:
+        f.write(f"$ {command}\n")
+        f.flush()
+        subprocess.run(command.split(), stdout=f, stderr=subprocess.STDOUT, check=False)
+
 # A process that runs alone waits for the machine to empty, then holds it until done.
 # A paired process waits for a free socket.
 batch_start = time.time()
@@ -359,7 +367,7 @@ for n, row in enumerate(order, 1):
     )
     print(CLEAR_LINE + progress, end="", flush=True)
     if n in pass_ends:
-        done = f"pass {pass_ends[n]} of {len(passes)} started, {minutes:.0f} min so far"
+        done = f"pass {pass_ends[n]} of {len(passes)} done, {minutes:.0f} min so far"
         print(CLEAR_LINE + done, flush=True)
 
 while running:
@@ -385,4 +393,5 @@ for r in results:
 for (data, query), found in counts.items():
     if len(found) > 1:
         print(f"COUNTS DISAGREE: {data} {query}: {sorted(found)}")
-print(f"done: {results_path}")
+minutes = (time.time() - batch_start) / 60
+print(f"done in {minutes:.0f} min: {results_path}")
