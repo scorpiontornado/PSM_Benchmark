@@ -831,6 +831,11 @@ for (auto& method_type : backMethods) {
         abort();
     }
 
+    if (command.getSpawnType() != "eager") {
+        LOG() << "Error: -spawn lazy supports only -QorCandi C." << std::endl;
+        abort();
+    }
+
     if (engine_type == "LFTJ") {
         EvaluateQuery::enum_method = [taskPool](TaskSlot& task, int task_id) { EvaluateQuery::LFTJ(taskPool, task, task_id); };
         EvaluateQuery::ParallelExecute(taskPool, multigraphs, unitArgsVec);
@@ -1064,6 +1069,7 @@ void split_C_test(MatchingCommand& command) {
     std::string input_type_schedule = command.getScheduleType();
     std::string input_type_queue = command.getQueueType();
     std::string input_type_runtime = command.getRuntimeType();
+    std::string input_type_spawn = command.getSpawnType();
     bool split_one_thread = command.getSplitOneThread();
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
@@ -1813,6 +1819,20 @@ for (auto& method_type : backMethods) {
         abort();
     }
 
+    if (input_type_spawn == "eager") {
+        taskPool->lazy_spawn = false;
+    } else if (input_type_spawn == "lazy") {
+        taskPool->lazy_spawn = true;
+    } else {
+        LOG() << "Error: The spawn type is not defined." << std::endl;
+        abort();
+    }
+
+    if (taskPool->lazy_spawn && !taskPool->use_onetbb) {
+        LOG() << "Error: -spawn lazy needs -runtime onetbb." << std::endl;
+        abort();
+    }
+
     // Under oneTBB, the pool's queue is only used for handing the initial tasks
     // to OneTBBExecute in one serial loop, so its type doesn't affect timings.
     // The concurrent queue is required for its atomic task counter, read by TaskNum:
@@ -1827,6 +1847,7 @@ for (auto& method_type : backMethods) {
     LOG() << "split_type == " << input_type_split << std::endl;
     LOG() << "queue_type == " << input_type_queue << std::endl;
     LOG() << "runtime_type == " << input_type_runtime << std::endl;
+    LOG() << "spawn_type == " << input_type_spawn << std::endl;
 
     std::string input_type_split = command.getSplitType();
     std::string input_type_schedule = command.getScheduleType();

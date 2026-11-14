@@ -30,6 +30,7 @@ MatchingCommand::MatchingCommand(const int argc, char **argv) : CommandParser(ar
     options_key[OptionKeyword::QueueType] = "-queue";
     options_key[OptionKeyword::RuntimeType] = "-runtime";
     options_key[OptionKeyword::OneThreadSplit] = "-split1thread";
+    options_key[OptionKeyword::SpawnType] = "-spawn";
     processOptions();
 };
 
@@ -114,6 +115,9 @@ void MatchingCommand::processOptions() {
 
     // Runtime beneath the enumeration kernels
     options_value[OptionKeyword::RuntimeType] = getCommandOption(options_key[OptionKeyword::RuntimeType]);
+
+    // When oneTBB split points spawn tasks
+    options_value[OptionKeyword::SpawnType] = getCommandOption(options_key[OptionKeyword::SpawnType]);
 }
 
 void MatchingCommand::printCommandOptions() {

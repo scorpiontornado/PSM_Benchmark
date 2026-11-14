@@ -56,7 +56,8 @@ enum OptionKeyword {
     ResultSinkType = 23,                  // -sink, threadlocal | globallock
     QueueType = 24,                       // -queue, mutex | concurrent
     RuntimeType = 25,                     // -runtime, taskpool | onetbb
-    OneThreadSplit = 26                   // -split1thread, present or absent
+    OneThreadSplit = 26,                  // -split1thread, present or absent
+    SpawnType = 27                        // -spawn, eager | lazy
 };
 
 class MatchingCommand : public CommandParser{
@@ -181,6 +182,10 @@ public:
 
     bool getSplitOneThread() {
         return commandOptionExists(options_key[OptionKeyword::OneThreadSplit]);
+    }
+
+    std::string getSpawnType() {
+        return options_value[OptionKeyword::SpawnType] == "" ? "eager" : options_value[OptionKeyword::SpawnType];
     }
 };
 

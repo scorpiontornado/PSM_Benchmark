@@ -181,6 +181,10 @@ class TaskPool {
     // std::threads.
     bool use_onetbb{false};
 
+    // -spawn lazy (needs -runtime onetbb): a split point spawns a task only while
+    // fewer spawned tasks are waiting to start than there are workers.
+    bool lazy_spawn{false};
+
     // -runtime onetbb: the task_group OneTBBExecute runs its tasks in, so that
     // splitTask and splitTaskU can add tasks to it through
     // EvaluateQuery::spawnOneTBBTask.
