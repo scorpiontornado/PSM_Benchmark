@@ -664,6 +664,10 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
                 // LOG() << "No idle thread." << std::endl;
                 return;
             }
+            // oneTBB lazy: don't split if there are at least as many unstarted tasks as threads
+            if (use_onetbb && lazy_spawn && unstarted_task_num.load(std::memory_order_relaxed) >= THREADS_NUMBER) {
+                return;
+            }
             break;
         }
         /**
@@ -675,6 +679,10 @@ TaskPool::splitTaskU(TaskSlot& parent_task, int down_depth) {
         {
             // Don't split if no threads are idle (task pool only - oneTBB doesn't use the counter)
             if (!use_onetbb && idle_thread_num == 0) {
+                return;
+            }
+            // oneTBB lazy: don't split if there are at least as many unstarted tasks as threads
+            if (use_onetbb && lazy_spawn && unstarted_task_num.load(std::memory_order_relaxed) >= THREADS_NUMBER) {
                 return;
             }
             int tmp_depth = parent_task.l_args->upper_depth;
@@ -1105,6 +1113,10 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
                 // LOG() << "No idle thread." << std::endl;
                 return;
             }
+            // oneTBB lazy: don't split if there are at least as many unstarted tasks as threads
+            if (use_onetbb && lazy_spawn && unstarted_task_num.load(std::memory_order_relaxed) >= THREADS_NUMBER) {
+                return;
+            }
             break;
         }
         
@@ -1112,6 +1124,10 @@ TaskPool::splitTask(TaskSlot& parent_task, int down_depth) {
         {
             // Don't split if no threads are idle (task pool only - oneTBB doesn't use the counter)
             if (!use_onetbb && idle_thread_num == 0) {
+                return;
+            }
+            // oneTBB lazy: don't split if there are at least as many unstarted tasks as threads
+            if (use_onetbb && lazy_spawn && unstarted_task_num.load(std::memory_order_relaxed) >= THREADS_NUMBER) {
                 return;
             }
             int tmp_depth = parent_task.l_args->upper_depth;

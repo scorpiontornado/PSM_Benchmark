@@ -170,6 +170,9 @@ class TaskPool {
     // thread message
     std::atomic<ui> idle_thread_num{0};
 
+    // Memory ordering: relaxed - no thread uses this to know that other data is ready
+    std::atomic<int> unstarted_task_num{0};
+
     ScheduleType schedule_type{ScheduleType::STATIC};
     SplitType split_type{SplitType::LINEAR};
 

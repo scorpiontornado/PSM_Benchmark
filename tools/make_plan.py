@@ -72,9 +72,14 @@ ONETBB = {
 
 # The oneTBB ablations, each mapped to the flags that replace -schedule.
 # They run only under pEC with eLFTJ and eCFL.
-# TODO: add cOBNS-lazy once it's implemented.
 ONETBB_ABLATIONS = {
     "cBNS-cq": "-schedule busy2idlenostop -queue concurrent",
+    "cOBNS-lazy": (
+        "-schedule busy2idlenostop -runtime onetbb -queue concurrent -spawn lazy"
+    ),
+    "cOBDS-lazy": (
+        "-schedule busy2idledepthstop -runtime onetbb -queue concurrent -spawn lazy"
+    ),
 }
 
 # The schedules in the runtime comparison, besides the ablations.

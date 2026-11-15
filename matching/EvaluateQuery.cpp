@@ -159,12 +159,22 @@ EvaluateQuery::OneTBBExecute(TaskPool* taskPool) {
 // The caller gives the task its ID, which also counts it in TaskNum.
 void
 EvaluateQuery::spawnOneTBBTask(TaskPool* taskPool, TaskSlot* task, int task_id) {
-    // run calls the lambda as const; the captured pointer is const but the TaskSlot it points to isn't
-    taskPool->task_group->run([task, task_id] {
+    if (taskPool->lazy_spawn) {
+        taskPool->unstarted_task_num.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    // run calls the lambda as const; the captured pointer is const but the TaskSlot it points to isn't.
+    // The taskPool pointer capture is safe because it outlives group.wait().
+    taskPool->task_group->run([taskPool, task, task_id] {
+        if (taskPool->lazy_spawn) {
+            taskPool->unstarted_task_num.fetch_sub(1, std::memory_order_relaxed);
+        }
+
         // Run the task with the chosen enumeration kernel, like in SingleExecute
         task->l_args->l_limit_num = TaskSlot::g_args->output_limit_num - TaskSlot::g_args->embedding_count;
         task->start_task_time = intTimer::getClockNano();
         enum_method(*task, task_id);
+
         // LOG() << "Finish task " << task_id << std::endl;
         delete task;
     });
