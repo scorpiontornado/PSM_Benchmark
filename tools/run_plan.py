@@ -10,6 +10,7 @@ and iterations.
 Each process writes its driver log and rows to <results_dir>/runs/,
 and <results_dir>/results.csv collects the rows of the plan's processes at the end.
 Rerunning skips processes that already have their rows, so a killed batch resumes.
+After a run times out, the identical processes of its cell that haven't run are skipped.
 Files of processes no longer in the plan stay in runs/ but are left out of results.csv.
 Each batch appends the machine's state at its start to <results_dir>/machine.txt.
 """
@@ -172,9 +173,19 @@ if args.overwrite:
         if os.path.exists(run_path(row, "csv")):
             os.remove(run_path(row, "csv"))
 
+
+def cell_of(row):
+    """The id shared by a process and its identical repeats."""
+    return row["id"].rsplit("-", 1)[0]
+
+
+# Once any repeat of a cell times out, its remaining repeats are skipped and the cell
+# counts as timed out, so time-limited cells cost one run instead of every repeat.
+timed_out_cells = set()
+
 # A process runs again from the start unless every run recorded an embedding count,
 # so a driver that crashed or was killed partway reruns on the next resume.
-todo = []
+unfinished = []
 for row in plan:
     finished = 0
     if os.path.exists(run_path(row, "csv")):
@@ -182,8 +193,16 @@ for row in plan:
             for r in csv.DictReader(f):
                 if r["embeddings"]:
                     finished += 1
+                if r["overtime"] == "1":
+                    timed_out_cells.add(cell_of(row))
     if finished < int(row["runs"]):
+        unfinished.append(row)
+
+todo = []
+for row in unfinished:
+    if cell_of(row) not in timed_out_cells:
         todo.append(row)
+skipped = len(unfinished) - len(todo)
 
 # With --pair, a process shares the machine with one other only if it has no CPU set of
 # its own and fits on one socket.
@@ -215,7 +234,9 @@ for p in sorted(passes):
     order += pairable + alone
     pass_ends[len(order)] = p
 print(
-    f"{len(todo)} of {len(plan)} processes to run, in {len(passes)} passes", flush=True
+    f"{len(todo)} of {len(plan)} processes to run, in {len(passes)} passes; "
+    f"{skipped} skipped because a repeat timed out",
+    flush=True,
 )
 
 columns = [
@@ -233,13 +254,23 @@ running = {}
 
 
 def start(row, socket, slot):
-    """Start a process on the socket's CPUs, or on the CPU set the plan gives it.
+    """Start a process on the CPUs its slot gets, or on the CPU set the plan gives it.
 
     `slot` is "alone" or "pair", and goes in the process's rows.
     """
     threads = int(row["threads"])
-    first = SOCKET_CORES * socket
-    cpus = row["cpus"] or f"{first}-{first + threads - 1}"
+
+    # A process running alone takes the highest-numbered physical cores, away from
+    # CPU 0 and the low CPUs other users are likely to pin to. Linux numbers every
+    # core's second hardware thread after all the first ones, so the physical cores
+    # are the first half of the CPUs.
+    if slot == "alone":
+        cores = os.cpu_count() // 2
+        default_cpus = f"{cores - threads}-{cores - 1}"
+    else:
+        first = SOCKET_CORES * socket
+        default_cpus = f"{first}-{first + threads - 1}"
+    cpus = row["cpus"] or default_cpus
 
     # The driver appends to its log, so a resumed process must not see an old one.
     log = run_path(row, "log")
@@ -315,6 +346,8 @@ def finish(socket):
         check_stored = "-QorCandi C" in row["flags"] and "-mode match" in row["flags"]
 
         for number, run in enumerate(runs, 1):
+            if run.get("overtime") == "1":
+                timed_out_cells.add(cell_of(row))
             finished = run.get("overtime") == "0"
             stored = run.get("stored_embeddings")
             if check_stored and finished and stored != run.get("embeddings"):
@@ -346,7 +379,9 @@ with open(os.path.join(args.results_dir, "machine.txt"), "a") as f:
 # A paired process waits for a free socket.
 batch_start = time.time()
 for n, row in enumerate(order, 1):
-    if row["id"] in alone_ids:
+    if cell_of(row) in timed_out_cells:
+        skipped += 1
+    elif row["id"] in alone_ids:
         while running:
             wait_for_one()
         start(row, 0, "alone")
@@ -394,4 +429,5 @@ for (data, query), found in counts.items():
     if len(found) > 1:
         print(f"COUNTS DISAGREE: {data} {query}: {sorted(found)}")
 minutes = (time.time() - batch_start) / 60
+print(f"{skipped} processes skipped because a repeat of theirs timed out")
 print(f"done in {minutes:.0f} min: {results_path}")

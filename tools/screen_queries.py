@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Keep the first queries in each density bin that eLFTJ finishes on 1 thread within 30 s.
+"""Keep the first queries in each density bin that take 10 ms to 30 s on 1 thread.
 
 Usage: python3 tools/screen_queries.py <thesis binary> <graph.txt> <count> <bin_dir>...
 
-Runs with delivery on, in file order, and stops a bin once <count> queries pass.
+Runs eLFTJ with delivery on, in file order, and stops a bin once <count> queries pass.
 Writes <bin_dir>/screened.txt: one "<query file> <seconds>" line per passing query.
 """
 
@@ -16,6 +16,10 @@ import time
 
 binary, graph, count, *bin_dirs = sys.argv[1:]
 count = int(count)
+
+# Queries faster than this on 1 thread are too short to time parallel runs on.
+MIN_SECONDS = 0.01
+
 start = time.time()
 
 for bin_dir in bin_dirs:
@@ -44,8 +48,11 @@ for bin_dir in bin_dirs:
             seconds = 0
             for timer in ["Enumerate time", "Consolidation time"]:
                 seconds += float(re.findall(timer + r" \(seconds\): (\S+)", text)[-1])
-            passed.append(f"{name} {seconds:.3f}")
-            last = f"{name} passed in {seconds:.1f} s"
+            if seconds >= MIN_SECONDS:
+                passed.append(f"{name} {seconds:.3f}")
+                last = f"{name} passed in {seconds:.1f} s"
+            else:
+                last = f"{name} too fast ({seconds * 1000:.1f} ms)"
         else:
             last = f"{name} did not finish"
 

@@ -451,8 +451,8 @@ match experiment:
             )
 
     # A small runtime comparison for trying out a change to the runtime: on DBLP, the
-    # screened query in each bin that took longest on 1 thread, at 16 threads, plus
-    # the 1-thread runs. Not for reported results.
+    # screened query in each bin that took longest on 1 thread, at 16 and 32 threads,
+    # plus the 1-thread runs. Not for reported results.
     case "runtime-quick":
         schedules = RUNTIME_SCHEDULES + list(ONETBB_ABLATIONS)
         combos = pick(
@@ -471,9 +471,9 @@ match experiment:
         add_processes(
             graph_path("dblp", "15"),
             queries,
-            with_one_thread(combos, [16]) + split_one_thread(combos),
+            with_one_thread(combos, [16, 32]) + split_one_thread(combos),
             ["delivered"],
-            processes=3,
+            processes=10,
         )
 
     # The slowest screened query in each bin, under three CPU sets: one socket,
