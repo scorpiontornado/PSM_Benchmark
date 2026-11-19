@@ -197,6 +197,23 @@ def screened_queries(name, labels, per_bin, bins=BINS):
     return queries
 
 
+def slowest_queries(name, labels):
+    """The screened query in each density bin that took longest on 1 thread."""
+    queries = []
+    for b in BINS:
+        pool = f"{datasets}/{name}/L{labels}/Q10/bin{b}"
+        seconds = {}
+        with open(f"{pool}/screened.txt") as f:
+            for line in f:
+                if line.strip():
+                    query, t = line.split()
+                    seconds[query] = float(t)
+        slowest = max(seconds, key=seconds.get)
+        print(f"{pool}/{slowest}: {seconds[slowest]} s on 1 thread in screening")
+        queries.append(f"{pool}/{slowest}")
+    return queries
+
+
 def first_queries(name, labels, size=10, bins=BINS):
     """The first generated query in each density bin, unscreened.
 
@@ -458,39 +475,32 @@ match experiment:
         combos = pick(
             ALL_COMBOS, [f"pEC-{c}-{e}" for c in schedules for e in ["eLFTJ", "eCFL"]]
         )
-
-        queries = []
-        for b in BINS:
-            pool = f"{datasets}/dblp/L15/Q10/bin{b}"
-            with open(f"{pool}/screened.txt") as f:
-                passed = [line.split() for line in f if line.strip()]
-            query, seconds = max(passed, key=lambda p: float(p[1]))
-            print(f"{pool}/{query}: {seconds} s on 1 thread in screening")
-            queries.append(f"{pool}/{query}")
-
         add_processes(
             graph_path("dblp", "15"),
-            queries,
+            slowest_queries("dblp", "15"),
             with_one_thread(combos, [16, 32]) + split_one_thread(combos),
             ["delivered"],
             processes=10,
         )
 
+    # Compare counting against storing for the pool and lazy oneTBB at
+    # 16, 24 and 32 threads, on runtime-quick's queries, to investigate why
+    # delivered runs stop scaling past 16 threads. With the CPUs picked by
+    # run_plan.py on TODS1, 16 and 24 threads stay on one NUMA node and 32 spans both.
+    case "scaling":
+        combos = pick(ALL_COMBOS, ["pEC-cBNS-eLFTJ", "pEC-cOBNS-lazy-eLFTJ"])
+        add_processes(
+            graph_path("dblp", "15"),
+            slowest_queries("dblp", "15"),
+            make_cells(combos, [16, 24, 32]),
+            ["count", "delivered"],
+            processes=5,
+        )
+
     # The slowest screened query in each bin, under three CPU sets: one socket,
     # two sockets, and one socket's cores with their SMT siblings.
     case "placement":
-        queries = []
-        for b in BINS:
-            pool = f"{datasets}/dblp/L15/Q10/bin{b}"
-            seconds = {}
-            with open(f"{pool}/screened.txt") as f:
-                for line in f:
-                    if line.strip():
-                        query, t = line.split()
-                        seconds[query] = float(t)
-            slowest = max(seconds, key=seconds.get)
-            queries.append(f"{pool}/{slowest}")
-
+        queries = slowest_queries("dblp", "15")
         cells = make_cells(pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16])
         for cpus in ["0-15", "0-7,16-23", "0-7,32-39"]:
             add_processes(
