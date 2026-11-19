@@ -138,6 +138,7 @@ void split_Q_test(MatchingCommand& command) {
     std::string input_join_paradigm = command.getJoinMethod();
     setResultMode(command.getResultMode());
     setSinkType(command.getSinkType());
+    Materializer::block_embeddings = std::stoul(command.getBlockEmbeddings());
     if (RESULT_MODE == ResultMode::RESULT_COUNT) {
         // The join phase consumes the per-unit tables and produces nothing
         // without them, so counting is not implementable under QSplit.
@@ -1078,6 +1079,7 @@ void split_C_test(MatchingCommand& command) {
     std::string input_join_paradigm = command.getJoinMethod();
     setResultMode(command.getResultMode());
     setSinkType(command.getSinkType());
+    Materializer::block_embeddings = std::stoul(command.getBlockEmbeddings());
 
     // std::cout << "log all inputs" << std::endl;
     // std::cout << "input_query_graph_file : " << input_query_graph_file << std::endl;

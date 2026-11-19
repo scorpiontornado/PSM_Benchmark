@@ -370,7 +370,13 @@ def wait_for_one():
 
 # Record the machine's state at the start of every batch, for the write-up.
 with open(os.path.join(args.results_dir, "machine.txt"), "a") as f:
-    for command in ["date", "uptime", "who", "vmstat 1 5", "lscpu", "free -g"]:
+    commands = ["date", "uname -r", "uptime", "who", "vmstat 1 5", "lscpu", "free -g"]
+    # Linux usually maps memory 4 KiB at a time, and the first write to each
+    # page triggers a page fault, so storing results costs ~250,000 page faults per GB.
+    # With transparent huge pages set to "always", it can map large allocations
+    # 2 MiB at a time, so big result blocks cause far fewer faults.
+    commands.append("cat /sys/kernel/mm/transparent_hugepage/enabled")
+    for command in commands:
         f.write(f"$ {command}\n")
         f.flush()
         subprocess.run(command.split(), stdout=f, stderr=subprocess.STDOUT, check=False)

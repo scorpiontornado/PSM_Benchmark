@@ -122,6 +122,10 @@ DELIVERY_FLAGS = {
     "count": "-mode count -sink globallock",
     "globallock": "-mode match -sink globallock",
     "threadlocal": "-mode match -sink threadlocal",
+    # 128 times the default block: 20 MiB per block for a 10-vertex query,
+    # so a DBLP query storing 290 million embeddings allocates ~550 blocks,
+    # rather than 71,000.
+    "delivered-big-blocks": "-mode match -sink threadlocal -block 524288",
     "repaired": "",
     "upstream": "",
 }
@@ -485,15 +489,16 @@ match experiment:
 
     # Compare counting against storing for the pool and lazy oneTBB at
     # 16, 24 and 32 threads, on runtime-quick's queries, to investigate why
-    # delivered runs stop scaling past 16 threads. With the CPUs picked by
-    # run_plan.py on TODS1, 16 and 24 threads stay on one NUMA node and 32 spans both.
+    # delivered runs stop scaling past 16 threads, and whether larger result blocks
+    # fix it. With the CPUs picked by run_plan.py on TODS1, 16 and 24 threads stay
+    # on one NUMA node and 32 spans both.
     case "scaling":
         combos = pick(ALL_COMBOS, ["pEC-cBNS-eLFTJ", "pEC-cOBNS-lazy-eLFTJ"])
         add_processes(
             graph_path("dblp", "15"),
             slowest_queries("dblp", "15"),
             make_cells(combos, [16, 24, 32]),
-            ["count", "delivered"],
+            ["count", "delivered", "delivered-big-blocks"],
             processes=5,
         )
 

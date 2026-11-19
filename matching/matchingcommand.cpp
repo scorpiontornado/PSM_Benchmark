@@ -31,6 +31,7 @@ MatchingCommand::MatchingCommand(const int argc, char **argv) : CommandParser(ar
     options_key[OptionKeyword::RuntimeType] = "-runtime";
     options_key[OptionKeyword::OneThreadSplit] = "-split1thread";
     options_key[OptionKeyword::SpawnType] = "-spawn";
+    options_key[OptionKeyword::BlockEmbeddings] = "-block";
     processOptions();
 };
 
@@ -118,6 +119,9 @@ void MatchingCommand::processOptions() {
 
     // When oneTBB split points spawn tasks
     options_value[OptionKeyword::SpawnType] = getCommandOption(options_key[OptionKeyword::SpawnType]);
+
+    // Embeddings per thread-local result block
+    options_value[OptionKeyword::BlockEmbeddings] = getCommandOption(options_key[OptionKeyword::BlockEmbeddings]);
 }
 
 void MatchingCommand::printCommandOptions() {

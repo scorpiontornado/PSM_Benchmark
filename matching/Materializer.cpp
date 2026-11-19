@@ -76,8 +76,8 @@ Materializer::recordSlow(int id_unit, const ui* embedding, int length) {
     }
 
     ThreadSink* sink = acquireSink(id_unit, length);
-    if (sink->blocks.empty() || sink->used_in_block == BLOCK_EMBEDDINGS) {
-        sink->blocks.push_back(new ui[BLOCK_EMBEDDINGS * (size_t)length]);
+    if (sink->blocks.empty() || sink->used_in_block == block_embeddings) {
+        sink->blocks.push_back(new ui[block_embeddings * (size_t)length]);
         sink->used_in_block = 0;
         g_block_count.fetch_add(1, std::memory_order_relaxed);
     }
@@ -114,7 +114,7 @@ Materializer::consolidate() {
                 continue;
             }
             for (size_t i = 0; i < sink->blocks.size(); i++) {
-                size_t rows = (i + 1 == sink->blocks.size()) ? sink->used_in_block : BLOCK_EMBEDDINGS;
+                size_t rows = (i + 1 == sink->blocks.size()) ? sink->used_in_block : block_embeddings;
                 ui* block = sink->blocks[i];
                 pm->data.insert(pm->data.end(), block, block + rows * (size_t)sink->length);
                 delete[] block;
@@ -169,7 +169,7 @@ Materializer::storedBytes() {
 
     std::unique_lock<std::mutex> lock(g_registry_mutex);
     for (ThreadSink* sink : g_registry) {
-        total += sink->blocks.size() * BLOCK_EMBEDDINGS * (size_t)sink->length * sizeof(ui);
+        total += sink->blocks.size() * block_embeddings * (size_t)sink->length * sizeof(ui);
     }
     return total;
 }

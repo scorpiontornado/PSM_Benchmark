@@ -57,7 +57,8 @@ enum OptionKeyword {
     QueueType = 24,                       // -queue, mutex | concurrent
     RuntimeType = 25,                     // -runtime, taskpool | onetbb
     OneThreadSplit = 26,                  // -split1thread, present or absent
-    SpawnType = 27                        // -spawn, eager | lazy
+    SpawnType = 27,                       // -spawn, eager | lazy
+    BlockEmbeddings = 28                  // -block, embeddings per thread-local block
 };
 
 class MatchingCommand : public CommandParser{
@@ -186,6 +187,10 @@ public:
 
     std::string getSpawnType() {
         return options_value[OptionKeyword::SpawnType] == "" ? "eager" : options_value[OptionKeyword::SpawnType];
+    }
+
+    std::string getBlockEmbeddings() {
+        return options_value[OptionKeyword::BlockEmbeddings] == "" ? "4096" : options_value[OptionKeyword::BlockEmbeddings];
     }
 };
 
