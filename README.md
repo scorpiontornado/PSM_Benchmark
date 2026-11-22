@@ -46,6 +46,7 @@ Main options, with the full list in `matching/matchingcommand.h`:
 | `-time_limit` | seconds |
 | `-mode` | `count` counts embeddings, `match` (default) stores them |
 | `-sink` | how a stored embedding is delivered: `threadlocal` (default), `globallock` |
+| `-block` | embeddings per `threadlocal` block, default 524288; small blocks mean many allocations, which stop storing from scaling across sockets |
 
 Not every split x schedule pair is valid; `valid_combinations` in
 `test_anony/survey_bash/C_exp.py` is the authoritative list. Some behaviour is set at

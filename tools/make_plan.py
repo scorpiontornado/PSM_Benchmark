@@ -59,14 +59,17 @@ QSPLIT_PATTERNS = {
 # oneTBB needs -queue concurrent for its atomic task counter.
 # TODO: add cOTO once it's implemented.
 ONETBB = {
-    "cOST": (["pFL"], "-schedule static -runtime onetbb -queue concurrent"),
+    "cOST": (
+        ["pFL"],
+        "-schedule static -runtime onetbb -queue concurrent -spawn eager",
+    ),
     "cOBNS": (
         ["pEC", "pFL"],
-        "-schedule busy2idlenostop -runtime onetbb -queue concurrent",
+        "-schedule busy2idlenostop -runtime onetbb -queue concurrent -spawn eager",
     ),
     "cOBDS": (
         ["pEC", "pFL"],
-        "-schedule busy2idledepthstop -runtime onetbb -queue concurrent",
+        "-schedule busy2idledepthstop -runtime onetbb -queue concurrent -spawn eager",
     ),
 }
 
@@ -116,16 +119,17 @@ BINS = ["1", "2", "3"]
 # The extra flags for each delivery column.
 # Yu et al.'s setup is what they measured: GSplit counts without storing.
 # The two controls don't take delivery flags.
+# Thread-local runs always pass -block, so no result depends on the binary's default.
+# 524,288 embeddings is 20 MiB per block for a 10-vertex query, so a DBLP query
+# storing 290 million embeddings allocates about 550 blocks instead of 71,000 with
+# 4096-embedding blocks (which stopped storing scaling past 16 threads on TODS1).
 DELIVERY_FLAGS = {
-    "delivered": "-mode match -sink threadlocal",
+    "delivered": "-mode match -sink threadlocal -block 524288",
     "yu-setup": "-mode count -sink globallock",
     "count": "-mode count -sink globallock",
     "globallock": "-mode match -sink globallock",
-    "threadlocal": "-mode match -sink threadlocal",
-    # 128 times the default block: 20 MiB per block for a 10-vertex query,
-    # so a DBLP query storing 290 million embeddings allocates ~550 blocks,
-    # rather than 71,000.
-    "delivered-big-blocks": "-mode match -sink threadlocal -block 524288",
+    "threadlocal": "-mode match -sink threadlocal -block 524288",
+    "delivered-small-blocks": "-mode match -sink threadlocal -block 4096",
     "repaired": "",
     "upstream": "",
 }
@@ -488,19 +492,33 @@ match experiment:
         )
 
     # Compare counting against storing for the pool and lazy oneTBB at
-    # 16, 24 and 32 threads, on runtime-quick's queries, to investigate why
-    # delivered runs stop scaling past 16 threads, and whether larger result blocks
-    # fix it. With the CPUs picked by run_plan.py on TODS1, 16 and 24 threads stay
-    # on one NUMA node and 32 spans both.
+    # 16, 24 and 32 threads, with small and large result blocks, to show the
+    # impact of block size past 16 threads. The queries are runtime-quick's on DBLP,
+    # plus the Human and Youtube queries that stored embeddings fastest on 1 thread
+    # in the runtime comparison. With the CPUs picked by run_plan.py on TODS1,
+    # 16 and 24 threads stay on one NUMA node whilst 32 spans both.
     case "scaling":
         combos = pick(ALL_COMBOS, ["pEC-cBNS-eLFTJ", "pEC-cOBNS-lazy-eLFTJ"])
+        cells = make_cells(combos, [16, 24, 32])
+        deliveries = ["count", "delivered-small-blocks", "delivered"]
         add_processes(
             graph_path("dblp", "15"),
             slowest_queries("dblp", "15"),
-            make_cells(combos, [16, 24, 32]),
-            ["count", "delivered", "delivered-big-blocks"],
+            cells,
+            deliveries,
             processes=5,
         )
+        for name, labels, query in [
+            ("human", "native", "bin2/Q10-1.txt"),
+            ("youtube", "15", "bin3/Q10-21.txt"),
+        ]:
+            add_processes(
+                graph_path(name, labels),
+                [f"{datasets}/{name}/L{labels}/Q10/{query}"],
+                cells,
+                deliveries,
+                processes=5,
+            )
 
     # The slowest screened query in each bin, under three CPU sets: one socket,
     # two sockets, and one socket's cores with their SMT siblings.

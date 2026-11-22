@@ -47,11 +47,12 @@ inline int SINK_TYPE = SinkType::SINK_THREAD_LOCAL;
 
 class Materializer {
   public:
-    // Embeddings per thread-local block, set by -block.
-    // Each new block is one allocation. At the default of 4096, a 10-vertex
-    // query's block is 163,840 bytes, which is above glibc's default 128 KiB
-    // mmap threshold - so each block is its own mmap.
-    static inline size_t block_embeddings = 4096;
+    // Embeddings per thread-local block, set by -block. Each new block is one
+    // allocation. With 4096-embedding blocks (160 KiB for a 10-vertex query,
+    // above glibc's default 128 KiB mmap threshold, so each block is its own mmap),
+    // storing stopped scaling past 16 threads on a two-socket Xeon. The default
+    // makes a 10-vertex query's block 20 MiB, 128 times fewer allocations.
+    static inline size_t block_embeddings = 524288;
 
     // Register the units whose tables receive the results. Call once per query,
     // after the unit args are built and before enumeration starts.

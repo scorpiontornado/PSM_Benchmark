@@ -190,7 +190,7 @@ public:
     }
 
     std::string getBlockEmbeddings() {
-        return options_value[OptionKeyword::BlockEmbeddings] == "" ? "4096" : options_value[OptionKeyword::BlockEmbeddings];
+        return options_value[OptionKeyword::BlockEmbeddings] == "" ? "524288" : options_value[OptionKeyword::BlockEmbeddings];
     }
 };
 
