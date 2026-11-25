@@ -1,4 +1,5 @@
 #include "Args.h"
+#include <cstdlib>
 #include <iomanip>  // std::setw()
 
 class TaskSlot;
@@ -622,7 +623,16 @@ if (FAILING_SET_FLAG) {
 // #endif
     embedding = new ui[query_vertices_num];
     idx_embedding = new ui[query_vertices_num];
-    visited_vertices = new bool[data_vertices_num];
+    if (zero_with_calloc) {
+        // Avoid zeroing memory twice for large blocks (>= ~128 KiB, for which
+        // glibc mmaps pages straight from the kernel that're already zeroed out)
+        visited_vertices = static_cast<bool*>(std::calloc(data_vertices_num, sizeof(bool)));
+    } else {
+        // Functionally the same as Yu et al.'s released artifact:
+        //   visited_vertices = new bool[data_vertices_num]; std::fill(..., false)
+        visited_vertices = static_cast<bool*>(std::malloc(data_vertices_num * sizeof(bool)));
+        std::fill(visited_vertices, visited_vertices + data_vertices_num, false);
+    }
     temp_buffer = new ui[max_candidates_num];
 // #ifdef ENABLE_FROZEN_SET
 if (FROZEN_SET_FLAG) {
@@ -641,7 +651,6 @@ if (FROZEN_SET_FLAG) {
         valid_candidate[i] = new ui[max_candidates_num];
     }
 
-    std::fill(visited_vertices, visited_vertices + data_vertices_num, false);
     this->query_vertices_num = query_vertices_num;
     this->max_candidates_num = max_candidates_num;
     this->data_vertices_num = data_vertices_num;
@@ -670,8 +679,11 @@ if (FAILING_SET_FLAG) {
 // #endif
     embedding = new ui[query_vertices_num];
     idx_embedding = new ui[query_vertices_num];
-    visited_vertices = new bool[data_vertices_num];
     temp_buffer = new ui[max_candidates_num];
+
+    // malloc to match free in ~LocalArgs (& the malloc/calloc in allocateBuffer)
+    // (doesn't need to zero because the memcpy below overwrites every byte)
+    visited_vertices = static_cast<bool*>(std::malloc(data_vertices_num * sizeof(bool)));
 // #ifdef ENABLE_FROZEN_SET
 if (FROZEN_SET_FLAG) {
     temp_buffer_edges = new ui[max_candidates_num];
@@ -893,7 +905,7 @@ if (FAILING_SET_FLAG) {
     // std::cout << "delete idx_embedding == " << idx_embedding << std::endl;
     delete[] idx_embedding;
     // std::cout << "delete visited_vertices == " << visited_vertices << std::endl;
-    delete[] visited_vertices;
+    std::free(visited_vertices);
     // std::cout << "delete temp_buffer == " << temp_buffer << std::endl;
     delete[] temp_buffer;
 

@@ -191,7 +191,10 @@ struct LocalArgs {
     ui* temp_buffer{nullptr};
     ui** valid_candidate_idx{nullptr};
     ui** valid_candidate{nullptr};
+    // Allocated with malloc or calloc and released with free, so that
+    // -zeroalloc calloc can skip zeroing pages the kernel already zeroed.
     bool* visited_vertices{nullptr};
+    static inline bool zero_with_calloc = false;
     std::vector<dpiso_min_pq> vec_rank_queue;
     std::unordered_set<ui> splited_u_set;
     ui* l_order{nullptr};

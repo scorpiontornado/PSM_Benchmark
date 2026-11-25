@@ -539,6 +539,29 @@ match experiment:
                 processes=3,
             )
 
+    # Ablate the two changes to initTasks (serial task creation at the start of a run):
+    #   1. zeroing the visited array through calloc instead of a fill, and
+    #   2. a fixed 256 initial tasks instead of 16 per thread.
+    # The 1-thread baseline is only run once, as the arms are the same for it.
+    case "init-ablation":
+        base = ALL_COMBOS["pEC-cBNS-eLFTJ"]
+        arms = {
+            "pEC-cBNS-eLFTJ": base,
+            "pEC-cBNS-eLFTJ-calloc": f"{base} -zeroalloc calloc",
+            "pEC-cBNS-eLFTJ-init256": f"{base} -inittasks 256",
+            "pEC-cBNS-eLFTJ-calloc-init256": f"{base} -zeroalloc calloc -inittasks 256",
+        }
+        cells = make_cells({"pEC-cBNS-eLFTJ": base}, [1])
+        cells += make_cells(arms, [2, 4, 8, 16, 24, 32])
+        for name, labels in [("human", "native"), ("dblp", "15"), ("youtube", "15")]:
+            add_processes(
+                graph_path(name, labels),
+                screened_queries(name, labels, 3),
+                cells,
+                ["delivered"],
+                processes=3,
+            )
+
     # The slowest screened query in each bin, under three CPU sets: one socket,
     # two sockets, and one socket's cores with their SMT siblings.
     case "placement":

@@ -58,7 +58,9 @@ enum OptionKeyword {
     RuntimeType = 25,                     // -runtime, taskpool | onetbb
     OneThreadSplit = 26,                  // -split1thread, present or absent
     SpawnType = 27,                       // -spawn, eager | lazy
-    BlockEmbeddings = 28                  // -block, embeddings per thread-local block
+    BlockEmbeddings = 28,                 // -block, embeddings per thread-local block
+    InitTaskCount = 29,                   // -inittasks, total initial tasks
+    ZeroAllocType = 30,                   // -zeroalloc, fill | calloc
 };
 
 class MatchingCommand : public CommandParser{
@@ -191,6 +193,15 @@ public:
 
     std::string getBlockEmbeddings() {
         return options_value[OptionKeyword::BlockEmbeddings] == "" ? "524288" : options_value[OptionKeyword::BlockEmbeddings];
+    }
+
+    // 0 means QUEUE_CAPACITY, as in Yu et al.'s artifact.
+    std::string getInitTaskCount() {
+        return options_value[OptionKeyword::InitTaskCount] == "" ? "0" : options_value[OptionKeyword::InitTaskCount];
+    }
+
+    std::string getZeroAllocType() {
+        return options_value[OptionKeyword::ZeroAllocType] == "" ? "fill" : options_value[OptionKeyword::ZeroAllocType];
     }
 };
 

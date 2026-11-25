@@ -450,10 +450,11 @@ TaskPool::candidateInitTasks(int id_unit) {
     UnitArgs* u_args = TaskSlot::g_args->unitArgsVec[id_unit];
     ui* candidates_count = u_args->candidates_count;
     VertexID start_vertex = u_args->order[0];
-    ui candinum_single_task = candidates_count[start_vertex] / QUEUE_CAPACITY;
+    int64_t init_task_count = INIT_TASK_COUNT > 0 ? INIT_TASK_COUNT : QUEUE_CAPACITY;
+    ui candinum_single_task = candidates_count[start_vertex] / init_task_count;
     // LOG() << "candinum_single_task = " << candinum_single_task << std::endl;
     // 额外的step_remainder是第0个task来承担的
-    ui num_remainder = candidates_count[start_vertex] % QUEUE_CAPACITY;
+    ui num_remainder = candidates_count[start_vertex] % init_task_count;
     ui candinum_first_task = candinum_single_task + num_remainder;
 
     /**
@@ -472,7 +473,7 @@ TaskPool::candidateInitTasks(int id_unit) {
     ui cur_idx = 0;
     int64_t alloc_ns = 0;
     int i = 0;
-for (; i < QUEUE_CAPACITY && cur_idx < candidates_count[start_vertex]; i++) {
+for (; i < init_task_count && cur_idx < candidates_count[start_vertex]; i++) {
         if (checkOverTime()) {
             break;
         }

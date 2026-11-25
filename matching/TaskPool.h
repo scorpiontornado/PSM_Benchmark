@@ -158,6 +158,8 @@ class TaskPool {
     std::condition_variable cv;
     uint64_t THREADS_NUMBER{1};
     int64_t QUEUE_CAPACITY{THREADS_NUMBER * 4};
+    // Initial tasks; 0 means QUEUE_CAPACITY. Must not exceed it.
+    int64_t INIT_TASK_COUNT{0};
 
     static std::function<void(TaskSlot&)> enum_method;
     std::queue<TaskSlot*> task_queue;

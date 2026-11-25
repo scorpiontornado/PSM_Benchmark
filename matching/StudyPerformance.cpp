@@ -49,6 +49,17 @@ void setSinkType(const std::string& input_sink) {
     }
 }
 
+void setZeroAlloc(const std::string& input_zeroalloc) {
+    if (input_zeroalloc == "fill") {
+        LocalArgs::zero_with_calloc = false;
+    } else if (input_zeroalloc == "calloc") {
+        LocalArgs::zero_with_calloc = true;
+    } else {
+        LOG() << "Error: The zeroalloc type is not defined." << std::endl;
+        abort();
+    }
+}
+
 // std::string extract_graph_file(std::string input_file, int num) {
 //     // 从右边开始查找第五个斜杠的位置
 //     size_t pos = input_file.size();
@@ -131,6 +142,7 @@ void split_Q_test(MatchingCommand& command) {
     std::string input_type_split = command.getSplitType();
     std::string input_type_schedule = command.getScheduleType();
     std::string input_type_queue = command.getQueueType();
+    int64_t init_task_count = std::stoll(command.getInitTaskCount());
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
 
@@ -138,6 +150,7 @@ void split_Q_test(MatchingCommand& command) {
     std::string input_join_paradigm = command.getJoinMethod();
     setResultMode(command.getResultMode());
     setSinkType(command.getSinkType());
+    setZeroAlloc(command.getZeroAllocType());
     Materializer::block_embeddings = std::stoul(command.getBlockEmbeddings());
     if (RESULT_MODE == ResultMode::RESULT_COUNT) {
         // The join phase consumes the per-unit tables and produces nothing
@@ -780,6 +793,7 @@ for (auto& method_type : backMethods) {
     if (input_type_schedule == "static" || input_type_schedule == "staticworkload") {
         taskPool->QUEUE_CAPACITY = std::numeric_limits<int64_t>::max();
     }
+    taskPool->INIT_TASK_COUNT = std::min(init_task_count, taskPool->QUEUE_CAPACITY);
 
     if (input_type_schedule == "static") {
         taskPool->schedule_type = ScheduleType::STATIC;
@@ -1072,6 +1086,7 @@ void split_C_test(MatchingCommand& command) {
     std::string input_type_runtime = command.getRuntimeType();
     std::string input_type_spawn = command.getSpawnType();
     bool split_one_thread = command.getSplitOneThread();
+    int64_t init_task_count = std::stoll(command.getInitTaskCount());
     std::string back_method_types = command.getBackMethodTypes();
     std::string input_QorCandi_split = command.getQorCandiType();
 
@@ -1079,6 +1094,7 @@ void split_C_test(MatchingCommand& command) {
     std::string input_join_paradigm = command.getJoinMethod();
     setResultMode(command.getResultMode());
     setSinkType(command.getSinkType());
+    setZeroAlloc(command.getZeroAllocType());
     Materializer::block_embeddings = std::stoul(command.getBlockEmbeddings());
 
     // std::cout << "log all inputs" << std::endl;
@@ -1772,6 +1788,7 @@ for (auto& method_type : backMethods) {
     if (input_type_schedule == "static" || input_type_schedule == "staticworkload") {
         taskPool->QUEUE_CAPACITY = std::numeric_limits<int64_t>::max();
     }
+    taskPool->INIT_TASK_COUNT = std::min(init_task_count, taskPool->QUEUE_CAPACITY);
 
     // LOG() << "queue_capacity == " << taskPool->QUEUE_CAPACITY << std::endl;
 

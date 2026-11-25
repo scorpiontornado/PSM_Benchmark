@@ -32,6 +32,8 @@ MatchingCommand::MatchingCommand(const int argc, char **argv) : CommandParser(ar
     options_key[OptionKeyword::OneThreadSplit] = "-split1thread";
     options_key[OptionKeyword::SpawnType] = "-spawn";
     options_key[OptionKeyword::BlockEmbeddings] = "-block";
+    options_key[OptionKeyword::InitTaskCount] = "-inittasks";
+    options_key[OptionKeyword::ZeroAllocType] = "-zeroalloc";
     processOptions();
 };
 
@@ -122,6 +124,10 @@ void MatchingCommand::processOptions() {
 
     // Embeddings per thread-local result block
     options_value[OptionKeyword::BlockEmbeddings] = getCommandOption(options_key[OptionKeyword::BlockEmbeddings]);
+
+    // Initial task count and how the visited array is zeroed
+    options_value[OptionKeyword::InitTaskCount] = getCommandOption(options_key[OptionKeyword::InitTaskCount]);
+    options_value[OptionKeyword::ZeroAllocType] = getCommandOption(options_key[OptionKeyword::ZeroAllocType]);
 }
 
 void MatchingCommand::printCommandOptions() {
