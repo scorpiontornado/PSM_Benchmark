@@ -524,7 +524,9 @@ match experiment:
     # two sockets, and one socket's cores with their SMT siblings.
     case "placement":
         queries = slowest_queries("dblp", "15")
-        cells = make_cells(pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16])
+        cells = make_cells(
+            pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-lazy-eCFL"]), [16]
+        )
         for cpus in ["0-15", "0-7,16-23", "0-7,32-39"]:
             add_processes(
                 graph_path("dblp", "15"),
@@ -573,12 +575,12 @@ match experiment:
                 )
 
     # 30 s against 300 s time limits, to measure how much the 30 s limit biases results.
-    # The delivered runs are the cBNS and cOBNS pair the large experiment compares.
+    # The delivered runs are the pool against lazy oneTBB (cBNS and cOBNS-lazy).
     # At 1 label most runs hit the window, so each cell runs once.
     case "window":
         graph_cells = make_cells(pick(YU_COMBOS, GRAPH_COMBOS), [16])
         pair_cells = make_cells(
-            pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-eCFL"]), [16]
+            pick(ALL_COMBOS, ["pEC-cBNS-eCFL", "pEC-cOBNS-lazy-eCFL"]), [16]
         )
         for labels, processes in [("15", 3), ("1", 1)]:
             data = graph_path("dblp", labels)
@@ -605,7 +607,7 @@ match experiment:
     # Repeats run inside one process, because reloading a large graph for every run
     # costs too much.
     case "large":
-        schedules = RUNTIME_SCHEDULES + ["cBNS-cq"]
+        schedules = ["cBNS", "cBDS"] + list(ONETBB_ABLATIONS)
         runtime = pick(
             ALL_COMBOS, [f"pEC-{c}-{e}" for c in schedules for e in ["eLFTJ", "eCFL"]]
         )
