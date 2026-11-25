@@ -520,6 +520,25 @@ match experiment:
                 processes=5,
             )
 
+    # How much of the serial task creation (initTasks) at the start of a run is
+    # buffer allocation, on the runtime experiment's queries.
+    # Every runtime creates its first tasks the same way, so only run pool.
+    case "init-timing":
+        cells = make_cells(pick(ALL_COMBOS, ["pEC-cBNS-eLFTJ"]), [16, 32])
+        for name, labels in [
+            ("HPRD", "15"),
+            ("human", "native"),
+            ("dblp", "15"),
+            ("youtube", "15"),
+        ]:
+            add_processes(
+                graph_path(name, labels),
+                screened_queries(name, labels, 3),
+                cells,
+                ["delivered"],
+                processes=3,
+            )
+
     # The slowest screened query in each bin, under three CPU sets: one socket,
     # two sockets, and one socket's cores with their SMT siblings.
     case "placement":

@@ -470,9 +470,11 @@ TaskPool::candidateInitTasks(int id_unit) {
     //     << ", queue_capacity == " << QUEUE_CAPACITY << std::endl;
 
     ui cur_idx = 0;
-for (int i = 0; i < QUEUE_CAPACITY && cur_idx < candidates_count[start_vertex]; i++) {
+    int64_t alloc_ns = 0;
+    int i = 0;
+for (; i < QUEUE_CAPACITY && cur_idx < candidates_count[start_vertex]; i++) {
         if (checkOverTime()) {
-            return;
+            break;
         }
         // Add the remainder to the first task slot.
         ui cur_num = i == 0 ? candinum_first_task : candinum_single_task;
@@ -485,9 +487,13 @@ for (int i = 0; i < QUEUE_CAPACITY && cur_idx < candidates_count[start_vertex]; 
         LocalArgs*& l_args = task->l_args;
         l_args = new LocalArgs();
         l_args->id_unit = id_unit;
-        l_args->allocateBuffer(TaskSlot::g_args);
         l_args->upper_depth = 0;
         l_args->cur_depth = 0;
+
+        auto t0 = std::chrono::steady_clock::now();
+        l_args->allocateBuffer(TaskSlot::g_args);
+        auto t1 = std::chrono::steady_clock::now();
+        alloc_ns += std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
 
 // NOTE: 这里是专门针对DPiso的，后面要想办法分离开
 // #ifdef ENABLE_FAILING_SET
@@ -558,6 +564,7 @@ if (FROZEN_SET_FLAG) {
         }
 } // end for loop
     // LOG() << "init task done" << std::endl;
+    LOG() << "InitTasks allocate time: " << NANOSECTOSEC(alloc_ns) << " s to make " << i << " tasks" << std::endl;
 }
 
 void

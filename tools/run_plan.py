@@ -34,6 +34,8 @@ FIELDS = {
     "filter_s": r"Filter vertices time \(seconds\): ([\d.eE+-]+)",
     "memory_mb": r"Memory cost \(MB\): ([\d.eE+-]+)",
     "init_tasks_s": r"InitTasks time: ([\d.eE+-]+)",
+    "init_alloc_s": r"InitTasks allocate time: ([\d.eE+-]+)",
+    "init_task_num": r"InitTasks allocate time: .* to make (\d+) tasks",
     "stored_embeddings": r"stored embeddings: (\d+)",
     "task_num": r"TaskNum: (\d+)",
     "overtime": r"Overtime: (\d+)",
