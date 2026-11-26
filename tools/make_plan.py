@@ -493,13 +493,22 @@ match experiment:
 
     # Compare counting against storing for the pool and lazy oneTBB at
     # 16, 24 and 32 threads, with small and large result blocks, to show the
-    # impact of block size past 16 threads. The queries are runtime-quick's on DBLP,
+    # impact of block size past 16 threads. Each runtime also runs with the visited
+    # array from calloc instead of a fill; the 1-thread baseline is only run once, as
+    # the arms are the same for it. The queries are runtime-quick's on DBLP,
     # plus the Human and Youtube queries that stored embeddings fastest on 1 thread
     # in the runtime comparison. With the CPUs picked by run_plan.py on TODS1,
     # 16 and 24 threads stay on one NUMA node whilst 32 spans both.
     case "scaling":
-        combos = pick(ALL_COMBOS, ["pEC-cBNS-eLFTJ", "pEC-cOBNS-lazy-eLFTJ"])
-        cells = make_cells(combos, [16, 24, 32])
+        pool = ALL_COMBOS["pEC-cBNS-eLFTJ"]
+        lazy = ALL_COMBOS["pEC-cOBNS-lazy-eLFTJ"]
+        combos = {"pEC-cBNS-eLFTJ": pool, "pEC-cOBNS-lazy-eLFTJ": lazy}
+        calloc_combos = {
+            "pEC-cBNS-eLFTJ-calloc": f"{pool} -zeroalloc calloc",
+            "pEC-cOBNS-lazy-eLFTJ-calloc": f"{lazy} -zeroalloc calloc",
+        }
+        cells = with_one_thread(combos, [16, 24, 32])
+        cells += make_cells(calloc_combos, [16, 24, 32])
         deliveries = ["count", "delivered-small-blocks", "delivered"]
         add_processes(
             graph_path("dblp", "15"),
