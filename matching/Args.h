@@ -191,8 +191,10 @@ struct LocalArgs {
     ui* temp_buffer{nullptr};
     ui** valid_candidate_idx{nullptr};
     ui** valid_candidate{nullptr};
-    // Allocated with malloc or calloc and released with free, so that
-    // -zeroalloc calloc can skip zeroing pages the kernel already zeroed.
+    // Under -zeroalloc calloc, allocated with malloc/calloc and released with free,
+    // so it can skip zeroing pages the kernel already zeroed. Otherwise new[]
+    // and delete[], as Yu et al. do. zero_with_calloc is set once at startup, before
+    // any LocalArgs exists, so allocation and release always match.
     bool* visited_vertices{nullptr};
     static inline bool zero_with_calloc = false;
     std::vector<dpiso_min_pq> vec_rank_queue;

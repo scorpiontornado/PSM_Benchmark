@@ -628,9 +628,8 @@ if (FAILING_SET_FLAG) {
         // glibc mmaps pages straight from the kernel that're already zeroed out)
         visited_vertices = static_cast<bool*>(std::calloc(data_vertices_num, sizeof(bool)));
     } else {
-        // Functionally the same as Yu et al.'s released artifact:
-        //   visited_vertices = new bool[data_vertices_num]; std::fill(..., false)
-        visited_vertices = static_cast<bool*>(std::malloc(data_vertices_num * sizeof(bool)));
+        // Allocate as was originally done in Yu et al.'s artifact
+        visited_vertices = new bool[data_vertices_num];
         std::fill(visited_vertices, visited_vertices + data_vertices_num, false);
     }
     temp_buffer = new ui[max_candidates_num];
@@ -681,9 +680,13 @@ if (FAILING_SET_FLAG) {
     idx_embedding = new ui[query_vertices_num];
     temp_buffer = new ui[max_candidates_num];
 
-    // malloc to match free in ~LocalArgs (& the malloc/calloc in allocateBuffer)
+    // malloc or new[] to match free or delete[] in ~LocalArgs (& allocateBuffer)
     // (doesn't need to zero because the memcpy below overwrites every byte)
-    visited_vertices = static_cast<bool*>(std::malloc(data_vertices_num * sizeof(bool)));
+    if (zero_with_calloc) {
+        visited_vertices = static_cast<bool*>(std::malloc(data_vertices_num * sizeof(bool)));
+    } else {
+        visited_vertices = new bool[data_vertices_num];
+    }
 // #ifdef ENABLE_FROZEN_SET
 if (FROZEN_SET_FLAG) {
     temp_buffer_edges = new ui[max_candidates_num];
@@ -905,7 +908,11 @@ if (FAILING_SET_FLAG) {
     // std::cout << "delete idx_embedding == " << idx_embedding << std::endl;
     delete[] idx_embedding;
     // std::cout << "delete visited_vertices == " << visited_vertices << std::endl;
-    std::free(visited_vertices);
+    if (zero_with_calloc) {
+        std::free(visited_vertices);
+    } else {
+        delete[] visited_vertices;
+    }
     // std::cout << "delete temp_buffer == " << temp_buffer << std::endl;
     delete[] temp_buffer;
 

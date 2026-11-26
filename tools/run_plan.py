@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Run every process in a plan CSV (from make_plan.py) and write one CSV row per run.
 
-Usage: python3 tools/run_plan.py <plan.csv> <results_dir> [--pair]
+Usage: python3 tools/run_plan.py <plan.csv> <results_dir> [--pair] [--perf]
 
 Processes run under taskset in passes, shuffled, so identical processes (the plan's
 repeats) are spread over the batch. Each process runs its plan row's `runs` times
 with one graph load. Kalibera and Jones (ISMM '13) call these two levels executions
 and iterations.
-Each process writes its driver log and rows to <results_dir>/runs/,
-and <results_dir>/results.csv collects the rows of the plan's processes at the end.
+Each process writes its driver log, rows, stderr (ending with /usr/bin/time -v's
+report) and, with --perf, perf stat's output to <results_dir>/runs/, and
+<results_dir>/results.csv collects the rows of the plan's processes at the end.
 Rerunning skips processes that already have their rows, so a killed batch resumes.
 After a run times out, the identical processes of its cell that haven't run are skipped.
 Files of processes no longer in the plan stay in runs/ but are left out of results.csv.
@@ -49,10 +50,31 @@ THREAD_FIELDS = {
     "thread_idle_s": r"Thread Idle Time:(.*)",
 }
 
-# Read from the output of /usr/bin/time -v.
+# Read from the output of /usr/bin/time -v. These and PERF_FIELDS cover the whole
+# process, including loading and filtering, and repeat on each of its runs' rows.
 PROCESS_FIELDS = {
     "peak_rss_kb": r"Maximum resident set size \(kbytes\): (\d+)",
     "exit_status": r"Exit status: (\d+)",
+    "user_s": r"User time \(seconds\): ([\d.]+)",
+    "sys_s": r"System time \(seconds\): ([\d.]+)",
+    "minor_faults": r"Minor \(reclaiming a frame\) page faults: (\d+)",
+    "voluntary_switches": r"Voluntary context switches: (\d+)",
+    "involuntary_switches": r"Involuntary context switches: (\d+)",
+}
+
+# Read from the CSV output of perf stat -x, (value, unit, event name, ...), with
+# --perf. Clock speed is cycles over task-clock. On Intel, cache-references and
+# cache-misses count the last-level cache, and node-loads and node-load-misses
+# count reads that missed it and were served by this socket's memory or the other's.
+# An event the CPU doesn't support is left blank.
+PERF_FIELDS = {
+    "perf_task_clock_ms": r"(?m)^([\d.]+),msec,task-clock,",
+    "perf_cycles": r"(?m)^(\d+),,cycles,",
+    "perf_instructions": r"(?m)^(\d+),,instructions,",
+    "perf_llc_references": r"(?m)^(\d+),,cache-references,",
+    "perf_llc_misses": r"(?m)^(\d+),,cache-misses,",
+    "perf_node_loads": r"(?m)^(\d+),,node-loads,",
+    "perf_node_load_misses": r"(?m)^(\d+),,node-load-misses,",
 }
 
 # Physical cores per socket on ICML2. Socket s has CPUs s * 16 to s * 16 + 15.
@@ -124,6 +146,12 @@ parser.add_argument(
     help="run two processes at once, one per socket, when each fits on one socket",
 )
 parser.add_argument("--seed", type=int, default=0, help="shuffle seed")
+parser.add_argument(
+    "--perf",
+    action="store_true",
+    help="also count each process's cycles, instructions, last-level cache "
+    "references and misses, and local and remote memory reads with perf stat",
+)
 parser.add_argument(
     "--overwrite",
     action="store_true",
@@ -249,6 +277,7 @@ columns = [
     *THREAD_FIELDS,
     "eps",
     *PROCESS_FIELDS,
+    *PERF_FIELDS,
 ]
 
 # Socket number -> the process running on it.
@@ -280,7 +309,13 @@ def start(row, socket, slot):
         os.remove(log)
 
     thread_counts = ",".join([row["threads"]] * int(row["runs"]))
-    command = ["taskset", "-c", cpus, "/usr/bin/time", "-v", row["binary"]]
+    command = ["taskset", "-c", cpus]
+    if args.perf:
+        events = "task-clock,cycles,instructions,cache-references,cache-misses"
+        events += ",node-loads,node-load-misses"
+        command += ["perf", "stat", "-x", ",", "-e", events]
+        command += ["-o", run_path(row, "perf"), "--"]
+    command += ["/usr/bin/time", "-v", row["binary"]]
     command += ["-d", row["data"], "-q", row["query"], *row["flags"].split()]
     command += ["-threadnums", thread_counts, "-num", "MAX", "-OutputFile", log]
 
@@ -303,6 +338,8 @@ def finish(socket):
     """Collect the process on the socket, report it if it failed, and write its rows."""
     job = running.pop(socket)
     time_text = job["process"].communicate()[1]
+    with open(run_path(job["row"], "stderr"), "w") as f:
+        f.write(time_text)
     log_text = ""
     if os.path.exists(job["log"]):
         with open(job["log"]) as f:
@@ -326,7 +363,14 @@ def finish(socket):
     mhz_run = ""
     if job["mhz"]:
         mhz_run = round(sum(job["mhz"]) / len(job["mhz"]))
+
+    perf_text = ""
+    if args.perf and os.path.exists(run_path(row, "perf")):
+        with open(run_path(row, "perf")) as f:
+            perf_text = f.read()
+
     common = {
+        **{k: last_match(p, perf_text) for k, p in PERF_FIELDS.items()},
         "binary_sha1": binary_hash[row["binary"]],
         "cpus_used": job["cpus"],
         "slot": job["slot"],
